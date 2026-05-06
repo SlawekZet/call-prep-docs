@@ -1,0 +1,108 @@
+---
+title: Response fields
+description: Complete reference of all fields returned by GET /research-status.
+---
+
+## Top-level response
+
+| Field          | Type     | Description                                      |
+|---------------|----------|--------------------------------------------------|
+| `research_id` | string   | Unique job identifier                            |
+| `status`      | string   | `queued` · `processing` · `completed` · `failed` |
+| `completed_at`| string   | ISO timestamp when job completed (nullable)      |
+| `error`       | string   | Error code if status is `failed` (nullable)      |
+| `data`        | object   | Enriched data — present when `completed`         |
+
+---
+
+## data.prospect
+
+| Field            | Type     | Description                                                |
+|-----------------|----------|------------------------------------------------------------|
+| `name`          | string   | Full name                                                  |
+| `title`         | string   | Job title, translated to English                          |
+| `company`       | string   | Current company name                                       |
+| `email`         | string   | Work email address                                         |
+| `linkedin_url`  | string   | LinkedIn profile URL                                       |
+| `photo`         | string   | Profile photo URL (nullable)                               |
+| `last_role_start` | string | Start date of current role — `YYYY-MM-DD` (nullable)      |
+| `summary`       | string   | AI-generated 2-3 sentence professional summary             |
+| `opening_talk`  | string[] | 3 conversation starters based on LinkedIn activity         |
+| `posts`         | Post[]   | Up to 3 recent LinkedIn posts with AI summaries            |
+
+### Post object
+
+| Field      | Type    | Description                         |
+|-----------|---------|-------------------------------------|
+| `text`    | string  | Full post text                      |
+| `posted`  | string  | Post date — `YYYY-MM-DD HH:MM:SS`   |
+| `post_url`| string  | LinkedIn post URL (nullable)        |
+| `summary` | string  | AI-generated one-sentence summary   |
+
+---
+
+## data.company
+
+| Field                 | Type     | Description                                                    |
+|----------------------|----------|----------------------------------------------------------------|
+| `name`               | string   | Company name                                                   |
+| `description`        | string   | Company description, translated to English                     |
+| `linkedin_url`       | string   | LinkedIn company page URL                                      |
+| `website`            | string   | Company website                                                |
+| `industry`           | string   | Industry (e.g. `software`, `marketing & advertising`)          |
+| `hq`                 | string   | Headquarters location (e.g. `San Francisco, US`)               |
+| `revenue`            | string   | Estimated annual revenue (nullable)                            |
+| `employees`          | string   | Estimated employee count                                       |
+| `technologies`       | string[] | Tech stack detected on company website                         |
+| `problems`           | string[] | 4 problems the company solves for its customers                |
+| `services`           | string[] | 4 main services or products the company offers                 |
+| `icp`                | string[] | 4 Ideal Customer Profiles of the company                       |
+| `synergy_points`     | string[] | 4 synergies between the company and **your product**           |
+| `discovery_questions`| string[] | 3 discovery questions tailored to ask this specific prospect   |
+| `clients`            | object[] | Estimated client count (nullable)                              |
+| `news`               | News[]   | Up to 3 recent company news items (max 12 months old)          |
+| `insights`           | string[] | 4 competitive insights                                         |
+| `posts`              | Post[]   | Up to 3 recent LinkedIn company posts with AI summaries        |
+
+### News object
+
+| Field     | Type   | Description                          |
+|----------|--------|--------------------------------------|
+| `summary`| string | One-sentence news summary            |
+| `url`    | string | Source URL (nullable)                |
+| `date`   | string | Month of publication — `YYYY-MM`     |
+
+---
+
+## data.decision_makers
+
+<Note>
+  Decision makers are only available on **Growth and Scale plans**.
+  On other plans, `decision_makers` will be an empty array.
+</Note>
+
+| Field            | Type   | Description                        |
+|-----------------|--------|------------------------------------|
+| `full_name`     | string | Full name                          |
+| `position_title`| string | Job title                          |
+| `linkedin_url`  | string | LinkedIn profile URL               |
+| `picture_url`   | string | Profile photo URL (nullable)       |
+| `location_text` | string | Location text from LinkedIn (nullable) |
+| `company_name`  | string | Company they work at               |
+
+---
+
+## Nullable fields
+
+Fields may be `null` when:
+- The prospect was not found in any data source (some fields will still be populated from the email domain)
+- LinkedIn posts were not available or the prospect has no public posts
+- News items are older than 12 months or no news was found
+- The plan does not include a specific feature
+
+Always handle `null` values in your code.
+
+```javascript
+const summary = data.prospect?.summary ?? 'No summary available';
+const dm      = data.decision_makers ?? [];
+```

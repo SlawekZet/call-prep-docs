@@ -1,0 +1,93 @@
+---
+title: cURL
+description: Using the CallPrep API with cURL.
+---
+
+## Submit a research request
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"email": "john.doe@acmecorp.com"}'
+```
+
+## With all optional fields
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.doe@acmecorp.com",
+    "prospect_name": "John Doe",
+    "company_name": "Acme Corp",
+    "linkedin_url": "https://www.linkedin.com/in/johndoe",
+    "company_linkedin_url": "https://www.linkedin.com/company/acme"
+  }'
+```
+
+**Response:**
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "processing",
+  "estimated_seconds": 30
+}
+```
+
+## Poll for results
+
+```bash
+curl \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/res_1a7b6e9c35a9b848 \
+  -H "Authorization: Bearer cp_live_..."
+```
+
+## Shell script — submit and poll
+
+```bash
+#!/bin/bash
+
+API_KEY="cp_live_..."
+BASE="https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1"
+EMAIL="${1:-john.doe@acmecorp.com}"
+
+# Submit
+echo "Submitting research for: $EMAIL"
+RESPONSE=$(curl -s -X POST "$BASE/research" \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\": \"$EMAIL\"}")
+
+RESEARCH_ID=$(echo "$RESPONSE" | grep -o '"research_id":"[^"]*"' | cut -d'"' -f4)
+echo "Research ID: $RESEARCH_ID"
+
+# Poll
+while true; do
+  sleep 5
+  STATUS_RESPONSE=$(curl -s "$BASE/research-status/$RESEARCH_ID" \
+    -H "Authorization: Bearer $API_KEY")
+
+  STATUS=$(echo "$STATUS_RESPONSE" | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
+  echo "Status: $STATUS"
+
+  if [ "$STATUS" = "completed" ]; then
+    echo "Done!"
+    echo "$STATUS_RESPONSE" | python3 -m json.tool
+    break
+  elif [ "$STATUS" = "failed" ]; then
+    echo "Failed!"
+    echo "$STATUS_RESPONSE"
+    exit 1
+  fi
+done
+```
+
+**Usage:**
+```bash
+chmod +x research.sh
+./research.sh john.doe@acmecorp.com
+```

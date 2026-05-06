@@ -1,0 +1,62 @@
+---
+title: Overview
+description: Research your prospects before every sales call with a single API call.
+---
+
+# What is CallPrep?
+
+CallPrep is an **async enrichment API** that researches a prospect before a sales call.
+You provide an email address — we return enriched data about the person and their company,
+including LinkedIn activity, AI-generated insights, synergy points with your product,
+and key decision makers.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/introduction/quickstart">
+    Make your first API call in under 5 minutes
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/post-research">
+    Full endpoint documentation with examples
+  </Card>
+  <Card title="How it works" icon="gears" href="/introduction/how-it-works">
+    Understand the enrichment pipeline
+  </Card>
+  <Card title="Get API Key" icon="key" href="https://call-prep-api.vercel.app/api-keys">
+    Generate your key in the dashboard
+  </Card>
+</CardGroup>
+
+## What you get
+
+For every prospect email you submit, CallPrep returns:
+
+**Prospect data**
+- Job title (translated to English), company, LinkedIn URL, photo
+- AI-generated professional summary
+- 3 personalised conversation starters based on LinkedIn activity
+- Up to 3 recent LinkedIn posts with AI summaries
+
+**Company data**
+- Industry, HQ, revenue, employee count, tech stack
+- 4 problems the company solves for customers
+- 4 synergy points with **your product** (personalised per API key)
+- 3 tailored discovery questions to ask in the call
+- Competitive insights and recent company news
+
+**Decision makers** *(Growth plan and above)*
+- Key people at the company (VPs, Directors, C-level)
+- Name, title, LinkedIn profile, location
+
+## How it's different
+
+Unlike static databases, CallPrep:
+
+- **Personalises insights to your product** — each API key is tied to your product's name, description, and target customers
+- **Combines multiple data sources** — Apollo, PDL, LinkedIn, and Claude AI
+- **Caches intelligently** — repeated lookups return instantly at no extra credit cost
+- **Translates automatically** — AI output in your preferred language
+
+## Base URL
+
+```
+https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1
+```

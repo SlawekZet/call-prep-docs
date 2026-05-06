@@ -1,0 +1,59 @@
+---
+title: FAQ
+description: Frequently asked questions about the CallPrep API.
+---
+
+<AccordionGroup>
+
+<Accordion title="How long does a research request take?">
+Typically **20–60 seconds** for a full research run.
+If data for the prospect or company is already cached, results return in under 2 seconds.
+</Accordion>
+
+<Accordion title="What happens if a prospect can't be found?">
+If no match is found via Apollo or PDL, the pipeline still enriches the company
+via the email domain and generates AI insights from available data.
+The `status` will be `completed` but some fields like `summary` or `opening_talk`
+may be `null`.
+</Accordion>
+
+<Accordion title="Does polling GET /research-status consume credits?">
+No. Only `POST /research` consumes 1 credit. You can poll as many times as needed.
+</Accordion>
+
+<Accordion title="Can I submit the same email multiple times?">
+Yes. CallPrep caches data per `(email, product)` combination.
+Subsequent requests return cached data immediately without calling external APIs.
+A credit is still consumed per request — but the response is near-instant.
+</Accordion>
+
+<Accordion title="What languages are supported for AI output?">
+AI-generated fields are output in the language set in your account preferences.
+Supported: English, Polish, German, French, Spanish, Italian, Portuguese, Dutch.
+Source data from external APIs is always translated to your preferred language.
+</Accordion>
+
+<Accordion title="Are decision makers available on all plans?">
+No. Decision makers are a **plan-gated feature** available on Growth and Scale plans.
+If your plan doesn't include this feature, `decision_makers` will be an empty array.
+</Accordion>
+
+<Accordion title="What is company_linkedin_url used for?">
+By default, CallPrep auto-detects the company LinkedIn URL from enrichment data.
+Providing `company_linkedin_url` in your request overrides auto-detection —
+useful when a company has multiple LinkedIn pages or the prospect's profile
+doesn't link to the correct one.
+</Accordion>
+
+<Accordion title="Is my data shared between users?">
+No. All enriched data is scoped to your account and product.
+Different users never see each other's data, even for the same email address.
+</Accordion>
+
+<Accordion title="What should I do if status stays in 'processing' for a long time?">
+If `status` remains `processing` for more than 3 minutes, the job will automatically
+transition to `failed`. You can then resubmit the same request.
+If this happens repeatedly, please contact [support@callprep.io](mailto:support@callprep.io).
+</Accordion>
+
+</AccordionGroup>

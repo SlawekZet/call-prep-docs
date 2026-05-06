@@ -1,0 +1,84 @@
+---
+title: Polling best practices
+description: How to efficiently poll for research results without wasting requests.
+---
+
+## Recommended polling pattern
+
+Poll every **5 seconds** with a maximum timeout of **3 minutes**.
+Most requests complete in 20–60 seconds.
+
+```javascript
+async function pollResearch(researchId, apiKey, options = {}) {
+  const {
+    intervalMs   = 5000,   // 5 seconds between polls
+    timeoutMs    = 180000, // 3 minute max
+    onProgress   = null,
+  } = options;
+
+  const BASE_URL = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, intervalMs));
+
+    const res  = await fetch(`${BASE_URL}/research-status/${researchId}`, {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+    });
+    const data = await res.json();
+
+    onProgress?.(data);
+
+    if (data.status === 'completed') return data;
+    if (data.status === 'failed')    throw new Error(`Research failed: ${data.error}`);
+  }
+
+  throw new Error('Research timed out after 3 minutes');
+}
+```
+
+## Status values
+
+| Status       | Meaning                                      | Action             |
+|-------------|----------------------------------------------|--------------------|
+| `queued`    | Job is waiting to be picked up by a worker   | Continue polling   |
+| `processing`| Pipeline is running                          | Continue polling   |
+| `completed` | All enrichment steps finished successfully   | Use the data       |
+| `failed`    | Pipeline encountered an unrecoverable error  | Check `error` field|
+
+## Polling does not consume credits
+
+`GET /research-status` is **free** — you can poll as many times as needed.
+Credits are only consumed when you call `POST /research`.
+
+## Cache hits return immediately
+
+If data for the same email was recently enriched (within cache TTL),
+`status` will be `completed` on the **first poll** — sometimes even before your first poll.
+Build your code to handle an immediate `completed` response.
+
+```javascript
+// Always check status immediately after submitting
+const initial = await fetch(`${BASE_URL}/research-status/${researchId}`, ...);
+const data    = await initial.json();
+
+if (data.status === 'completed') {
+  // Cache hit — no need to poll
+  return data;
+}
+
+// Otherwise, start polling
+```
+
+## Exponential backoff (optional)
+
+For high-volume usage, consider exponential backoff to reduce load:
+
+```javascript
+let delay = 2000; // start at 2s
+while (/* not done */) {
+  await new Promise(r => setTimeout(r, delay));
+  delay = Math.min(delay * 1.5, 10000); // cap at 10s
+  // ... check status
+}
+```

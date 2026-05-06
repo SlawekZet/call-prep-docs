@@ -1,0 +1,45 @@
+---
+title: Credits
+description: How credits work and when they reset.
+---
+
+## What is a credit?
+
+One credit = one call to `POST /research`. Credits are consumed when you submit a new
+research request, regardless of whether the result comes from cache or live API calls.
+
+## Credit reset
+
+Credits reset at the start of your **billing cycle** — the same day each month
+as when you first subscribed. You'll see the exact reset date on your
+[Analytics](https://call-prep-api.vercel.app/analytics) page.
+
+Unused credits **do not roll over** to the next month.
+
+## Monitoring usage
+
+You can track your credit usage in real time:
+- **Sidebar** — remaining credits shown in the dashboard sidebar
+- **Analytics page** — daily usage chart and credit donut
+
+## Credit alerts
+
+Enable email notifications at 75% and 95% usage in
+[Settings → Notifications](https://call-prep-api.vercel.app/settings).
+
+## Cache hits still consume credits
+
+When a research request returns cached data (response in <2s),
+1 credit is still consumed. This is intentional — you're using the service
+and the cached data was paid for on a previous request.
+
+## Credit refunds
+
+Credits are refunded automatically if a research job fails due to an infrastructure error
+(timeout, pipeline crash). Credits are **not** refunded when:
+- The prospect wasn't found in any data source
+- The AI step failed but other data was returned
+- You submitted an invalid email
+
+If you believe a credit was incorrectly consumed, contact
+[support@callprep.io](mailto:support@callprep.io) with the `research_id`.

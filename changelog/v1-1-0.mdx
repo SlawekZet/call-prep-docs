@@ -1,0 +1,48 @@
+---
+title: v1.1.0
+description: LinkedIn posts, multi-language support, and error logging.
+---
+
+<Update label="April 2026" tags={["feature", "improvement"]}>
+
+## What's new in v1.1.0
+
+### LinkedIn post analysis
+
+Prospect and company LinkedIn posts are now fetched and included in the response.
+Posts include the full text, date, and an AI-generated one-sentence summary.
+
+```json
+"posts": [
+  {
+    "text": "We cut our sales cycle by 18%...",
+    "posted": "2026-04-21 09:15:00",
+    "summary": "Reduced sales cycle 18% by mandating pre-call research briefs."
+  }
+]
+```
+
+### Multi-language support
+
+AI-generated content is now generated in the language set in your account preferences.
+Supported languages: English, Polish, German, French, Spanish, Italian, Portuguese, Dutch.
+
+All source data from external APIs is automatically translated to your preferred language.
+
+### Apollo Org fallback
+
+If neither Apollo People Match nor PDL return company data,
+we now automatically enrich the company via the email domain using Apollo's Organization API.
+
+### Improved error logging
+
+Failed pipeline steps are now logged internally for faster debugging.
+If you report an issue with a `research_id`, our team can see exactly which step failed.
+
+### Bug fixes
+
+- Fixed: prospect title not being translated when user language is set to non-English
+- Fixed: company posts occasionally being saved to the wrong company record
+- Fixed: PDL fallback not triggering correctly for certain email domains
+
+</Update>

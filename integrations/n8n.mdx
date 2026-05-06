@@ -1,0 +1,98 @@
+---
+title: n8n
+description: Automate prospect research with n8n workflows.
+---
+
+## Overview
+
+[n8n](https://n8n.io) is a workflow automation platform that lets you connect CallPrep
+to your CRM, email tools, Slack, and more — without writing code.
+
+<Note>
+  The official CallPrep n8n template is coming soon.
+  In the meantime, use the HTTP Request node as described below.
+</Note>
+
+## Setting up credentials
+
+1. In n8n, go to **Credentials** → **New** → **Header Auth**
+2. Set **Name** to `Authorization`
+3. Set **Value** to `Bearer cp_live_your_api_key_here`
+4. Save as **CallPrep API**
+
+## Workflow: Research a prospect from a form submission
+
+This workflow triggers when a new prospect is added (e.g. from a Typeform or HubSpot form)
+and enriches them using CallPrep.
+
+### Step 1 — Trigger
+
+Use any trigger node: Webhook, HubSpot, Salesforce, Google Sheets, etc.
+
+### Step 2 — POST /research
+
+Add an **HTTP Request** node:
+
+| Field  | Value |
+|--------|-------|
+| Method | POST  |
+| URL    | `https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research` |
+| Authentication | Header Auth → CallPrep API |
+| Body Content Type | JSON |
+
+**Body:**
+```json
+{
+  "email": "={{ $json.email }}",
+  "prospect_name": "={{ $json.name }}",
+  "company_name": "={{ $json.company }}"
+}
+```
+
+### Step 3 — Wait 30 seconds
+
+Add a **Wait** node set to 30 seconds.
+
+### Step 4 — GET /research-status
+
+Add another **HTTP Request** node:
+
+| Field  | Value |
+|--------|-------|
+| Method | GET   |
+| URL    | `https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/={{ $json.research_id }}` |
+| Authentication | Header Auth → CallPrep API |
+
+### Step 5 — IF: Check status
+
+Add an **IF** node:
+- Condition: `{{ $json.status }}` equals `completed`
+- True → continue to next step
+- False → loop back to Wait node (use a **Loop** node)
+
+### Step 6 — Use the data
+
+Send the enriched data to Slack, update your CRM, create a brief document — whatever fits your workflow.
+
+## Example use cases
+
+<AccordionGroup>
+  <Accordion title="Enrich new HubSpot contacts automatically">
+    Trigger on new HubSpot contact → CallPrep research → Update HubSpot contact properties
+    with summary, company insights, and opening talk tracks.
+  </Accordion>
+  <Accordion title="Pre-meeting brief in Slack">
+    Trigger 30 minutes before a Google Calendar meeting →
+    Research the attendee's email → Post a brief to your Slack channel.
+  </Accordion>
+  <Accordion title="Enrich leads from LinkedIn lead gen forms">
+    Webhook from LinkedIn → CallPrep → Add to CRM with full enrichment.
+  </Accordion>
+</AccordionGroup>
+
+## Coming soon
+
+The official CallPrep n8n node will support:
+- Native credential management
+- Automatic polling (no Wait node needed)
+- Structured output mapping

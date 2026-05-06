@@ -1,0 +1,117 @@
+---
+title: Node.js
+description: Using the CallPrep API with Node.js.
+---
+
+## Installation
+
+No SDK required — use the native `fetch` API (Node.js 18+) or any HTTP client.
+
+```bash
+# Optional — for older Node.js versions
+npm install node-fetch
+```
+
+## Minimal example
+
+```javascript
+const API_KEY = process.env.CALLPREP_API_KEY;
+const BASE    = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+
+async function research(email) {
+  // 1. Submit
+  const res  = await fetch(`${BASE}/research`, {
+    method:  'POST',
+    headers: { 'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ email }),
+  });
+  const { research_id } = await res.json();
+
+  // 2. Poll
+  while (true) {
+    await new Promise(r => setTimeout(r, 5000));
+    const s    = await fetch(`${BASE}/research-status/${research_id}`, {
+      headers: { 'Authorization': `Bearer ${API_KEY}` },
+    });
+    const data = await s.json();
+    if (data.status === 'completed') return data;
+    if (data.status === 'failed')    throw new Error(data.error);
+  }
+}
+
+const result = await research('john.doe@acmecorp.com');
+console.log(result.data.prospect.opening_talk);
+```
+
+## With TypeScript
+
+```typescript
+interface ResearchResult {
+  research_id:  string;
+  status:       'completed' | 'failed' | 'processing' | 'queued';
+  completed_at: string | null;
+  data?: {
+    prospect: {
+      name:         string;
+      title:        string;
+      company:      string;
+      summary:      string;
+      opening_talk: string[];
+    };
+    company: {
+      name:               string;
+      synergy_points:     string[];
+      discovery_questions:string[];
+    };
+    decision_makers: Array<{
+      full_name:       string;
+      position_title:  string;
+      linkedin_url:    string;
+    }>;
+  };
+}
+
+async function research(email: string): Promise<ResearchResult> {
+  const BASE    = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+  const headers = {
+    'Authorization': `Bearer ${process.env.CALLPREP_API_KEY}`,
+    'Content-Type':  'application/json',
+  };
+
+  const init = await fetch(`${BASE}/research`, {
+    method: 'POST', headers, body: JSON.stringify({ email }),
+  });
+  const { research_id } = await init.json();
+
+  while (true) {
+    await new Promise(r => setTimeout(r, 5000));
+    const res  = await fetch(`${BASE}/research-status/${research_id}`, { headers });
+    const data = await res.json() as ResearchResult;
+    if (data.status === 'completed') return data;
+    if (data.status === 'failed')    throw new Error(data.error as string);
+  }
+}
+```
+
+## With Express.js
+
+```javascript
+import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.post('/enrich', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'email required' });
+
+  try {
+    const data = await research(email);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.listen(3000);
+```

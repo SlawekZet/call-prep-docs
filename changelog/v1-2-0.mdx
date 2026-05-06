@@ -1,0 +1,42 @@
+---
+title: v1.2.0
+description: Decision makers, LinkedIn posts, and improved caching.
+---
+
+<Update label="May 2026" tags={["feature", "improvement"]}>
+
+## What's new in v1.2.0
+
+### Decision makers (Growth+)
+
+Users on the **Growth plan and above** can now retrieve key decision makers
+at the prospect's company — Directors, VPs, and C-level executives.
+
+```json
+"decision_makers": [
+  {
+    "full_name": "Jane Smith",
+    "position_title": "Chief Revenue Officer",
+    "linkedin_url": "https://www.linkedin.com/in/janesmith",
+    "location_text": "San Francisco, CA"
+  }
+]
+```
+
+### LinkedIn post summaries
+
+LinkedIn posts now include an AI-generated `summary` field alongside the full post text.
+
+### Granular cache flags
+
+The pipeline now tracks `needsAI` and `needsPosts` separately from `fetch`.
+If a prospect was previously enriched but without AI insights (e.g. due to a pipeline error),
+the next request will regenerate only the AI fields — without re-calling data source APIs.
+
+### Bug fixes
+
+- Fixed: company description not being translated to the user's preferred language
+- Fixed: Apollo Org fallback not triggering when PDL returned partial company data
+- Fixed: Decision makers cache TTL incorrectly set to 30 days (now 60 days)
+
+</Update>

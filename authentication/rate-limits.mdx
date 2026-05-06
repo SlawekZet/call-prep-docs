@@ -1,0 +1,58 @@
+---
+title: Rate limits
+description: Understanding credit consumption and request limits.
+---
+
+## Credits
+
+Each call to `POST /research` consumes **1 credit** from your monthly plan.
+Credits reset at the start of your billing cycle.
+
+| Plan    | Credits/month | Price/credit |
+|---------|--------------|--------------|
+| Free    | 3            | —            |
+| Starter | 50           | $0.98        |
+| Growth  | 200          | $0.75        |
+| Scale   | 600          | $0.58        |
+
+<Note>
+  `GET /research-status` does **not** consume credits — poll as many times as needed.
+</Note>
+
+## Cache hits
+
+If a prospect or company was recently enriched (within cache TTL),
+the request returns cached data immediately. A credit is still consumed,
+but no external API calls are made — so the response is near-instant.
+
+This means you can safely re-research the same prospect multiple times
+(e.g. before each call with them) without duplicating external API costs.
+
+## Credit alerts
+
+You can enable email notifications when you reach 75% and 95% of your monthly credits
+in [Settings → Notifications](https://call-prep-api.vercel.app/settings).
+
+## What happens when credits run out
+
+`POST /research` will return `429 credits_exhausted`.
+Your existing data and API keys remain active — you just can't start new research jobs
+until the next billing cycle or until you upgrade your plan.
+
+```json
+{
+  "error": "credits_exhausted",
+  "used": 50,
+  "limit": 50
+}
+```
+
+## Concurrent requests
+
+There is no hard limit on concurrent requests, but the research worker
+processes one job per invocation. For high-volume batch enrichment,
+consider spacing requests out or contact us about custom plans.
+
+## API key limits
+
+See the [API Keys](/authentication/api-keys) page for key limits per plan.

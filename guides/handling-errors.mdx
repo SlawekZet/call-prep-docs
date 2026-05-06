@@ -1,0 +1,141 @@
+---
+title: Handling errors
+description: Best practices for handling errors and retries in production.
+---
+
+## Error categories
+
+**Client errors (4xx)** — caused by invalid requests. Fix the request before retrying.
+
+**Server errors (5xx)** — caused by infrastructure issues. Safe to retry with backoff.
+
+**Job failures** — `status: failed` in research results. Usually safe to resubmit.
+
+## Production-ready error handler
+
+```javascript
+class CallPrepClient {
+  constructor(apiKey) {
+    this.apiKey    = apiKey;
+    this.baseUrl   = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+  }
+
+  async research(email, options = {}) {
+    const res = await fetch(`${this.baseUrl}/research`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, ...options }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new CallPrepError(data.error, res.status, data);
+    }
+
+    return data;
+  }
+
+  async pollStatus(researchId, { intervalMs = 5000, timeoutMs = 180000 } = {}) {
+    const deadline = Date.now() + timeoutMs;
+
+    while (Date.now() < deadline) {
+      await sleep(intervalMs);
+
+      const res  = await fetch(`${this.baseUrl}/research-status/${researchId}`, {
+        headers: { 'Authorization': `Bearer ${this.apiKey}` },
+      });
+      const data = await res.json();
+
+      if (data.status === 'completed') return data;
+      if (data.status === 'failed') {
+        throw new CallPrepError('job_failed', 200, data);
+      }
+    }
+
+    throw new CallPrepError('polling_timeout', 0, { researchId });
+  }
+}
+
+class CallPrepError extends Error {
+  constructor(code, status, body) {
+    super(`CallPrep error: ${code}`);
+    this.code   = code;
+    this.status = status;
+    this.body   = body;
+  }
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+```
+
+## Handling specific error codes
+
+```javascript
+try {
+  const { research_id } = await client.research(email);
+  const result          = await client.pollStatus(research_id);
+  return result.data;
+
+} catch (err) {
+  if (!(err instanceof CallPrepError)) throw err;
+
+  switch (err.code) {
+    case 'credits_exhausted':
+    case 'trial_limit_reached':
+      // Notify user to upgrade — don't retry
+      notifyUser('Credit limit reached. Please upgrade your plan.');
+      break;
+
+    case 'invalid_key':
+      // Configuration issue — alert the developer
+      alertDev('Invalid CallPrep API key');
+      break;
+
+    case 'invalid_email_format':
+      // Validate email before calling API
+      console.warn('Invalid email:', email);
+      break;
+
+    case 'job_failed':
+      // Pipeline error — safe to retry once
+      console.error('Research job failed:', err.body);
+      break;
+
+    case 'polling_timeout':
+      // Job took too long — check research_id manually
+      console.error('Polling timed out for:', err.body.researchId);
+      break;
+
+    default:
+      // Unexpected error — log and alert
+      console.error('Unexpected CallPrep error:', err);
+  }
+}
+```
+
+## Retry strategy
+
+| Error           | Retry? | Strategy                        |
+|----------------|--------|---------------------------------|
+| `credits_exhausted` | ❌ | Wait for next billing cycle     |
+| `invalid_key`   | ❌     | Fix configuration               |
+| `invalid_email_format` | ❌ | Fix input data               |
+| `job_failed`    | ✅     | Retry once after 5s             |
+| `5xx` errors    | ✅     | Exponential backoff, max 3 retries |
+| `polling_timeout` | ✅   | Resubmit with fresh `research_id` |
+
+## Logging
+
+Always log the `research_id` — it's essential for debugging with support:
+
+```javascript
+const { research_id } = await client.research(email);
+logger.info('Research started', { research_id, email });
+
+const result = await client.pollStatus(research_id);
+logger.info('Research completed', { research_id, duration_ms: result._meta?.duration_ms });
+```

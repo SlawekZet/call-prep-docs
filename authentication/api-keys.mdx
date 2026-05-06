@@ -1,0 +1,87 @@
+---
+title: API Keys
+description: How to generate, manage, and secure your CallPrep API keys.
+---
+
+## Generating an API key
+
+1. Go to [API Keys](https://call-prep-api.vercel.app/api-keys) in the dashboard
+2. Click **Generate new key**
+3. Enter your product URL — we'll automatically extract your product name and description
+4. Review the generated product context (name, description, key features, target customers)
+5. Click **Create key**
+
+Your key will be shown **once**. Copy it immediately and store it securely.
+
+<Warning>
+  If you lose your API key, you'll need to generate a new one.
+  There is no way to retrieve an existing key after it's been shown.
+</Warning>
+
+## Product context
+
+Each API key is tied to a **product context** — the name, description, key features,
+and target customers of your product. This context is sent to Claude AI for every research request,
+so all generated insights (synergy points, discovery questions, opening talks)
+are personalised to your specific product.
+
+You can have multiple keys with different product contexts — useful if you sell
+multiple products or to different market segments.
+
+## Key format
+
+```
+cp_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Keys always start with `cp_live_` followed by 42 random characters.
+
+## Using your key
+
+Pass your key as a Bearer token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer cp_live_..." \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/res_xxx
+```
+
+## Key limits by plan
+
+| Plan    | API keys |
+|---------|----------|
+| Free    | 1        |
+| Starter | 3        |
+| Growth  | 10       |
+| Scale   | Unlimited|
+
+## Security best practices
+
+<AccordionGroup>
+  <Accordion title="Never expose keys in client-side code">
+    API keys should only be used server-side. Never include them in browser JavaScript,
+    mobile apps, or public repositories. Use environment variables instead.
+
+    ```bash
+    # .env
+    CALLPREP_API_KEY=cp_live_...
+    ```
+  </Accordion>
+  <Accordion title="Rotate keys regularly">
+    Generate a new key periodically and update your integrations.
+    Delete old keys from the dashboard once they're no longer in use.
+  </Accordion>
+  <Accordion title="Use separate keys per environment">
+    Use different keys for development, staging, and production.
+    This way you can revoke a compromised dev key without affecting production.
+  </Accordion>
+  <Accordion title="If a key is compromised">
+    Immediately delete the key from the dashboard and generate a new one.
+    Check your research logs in the dashboard to identify any unauthorised usage.
+  </Accordion>
+</AccordionGroup>
+
+## Revoking a key
+
+Go to [API Keys](https://call-prep-api.vercel.app/api-keys) in the dashboard,
+find the key and click **Revoke**. Revocation is immediate — any requests using
+that key will return `401 invalid_key`.

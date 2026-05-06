@@ -1,0 +1,76 @@
+---
+title: How it works
+description: Understanding the CallPrep enrichment pipeline.
+---
+
+## Async pipeline
+
+CallPrep uses an **asynchronous pipeline** — when you submit a research request,
+we immediately return a `research_id` and run enrichment in the background.
+This allows us to call multiple data sources in parallel without blocking your request.
+
+```
+POST /research → research_id (instant)
+         ↓
+   [background pipeline]
+         ↓
+GET /research-status → completed + data
+```
+
+## Enrichment steps
+
+<Steps>
+  <Step title="Apollo People Match">
+    We match the email against Apollo.io's database to retrieve the prospect's
+    job title, LinkedIn URL, employment history, and company details.
+  </Step>
+  <Step title="PDL Fallback">
+    If Apollo doesn't find a match, we fall back to People Data Labs for
+    additional coverage — especially useful for smaller companies and non-US contacts.
+  </Step>
+  <Step title="Apollo Org Enrichment">
+    If neither Apollo nor PDL return company data, we enrich the company
+    directly using the email domain via Apollo's organization API.
+  </Step>
+  <Step title="LinkedIn Posts">
+    We fetch the prospect's and company's recent LinkedIn posts (up to 3 each)
+    via RapidAPI — used to generate personalised conversation starters.
+  </Step>
+  <Step title="Claude AI Insights">
+    We send all collected data to Claude (Anthropic) along with your product context.
+    Claude generates summaries, opening talk tracks, synergy points,
+    discovery questions, competitive insights, and translates everything
+    to your preferred language.
+  </Step>
+  <Step title="Decision Makers (Growth+)">
+    For users on Growth plan and above, we scrape key people at the company
+    (Directors, VPs, C-level) via Apify's LinkedIn scraper.
+  </Step>
+</Steps>
+
+## Caching
+
+CallPrep caches enriched data to reduce costs and latency.
+If a prospect or company has been researched before (within cache TTL),
+results return **immediately** — usually under 2 seconds — and no data source APIs are called.
+
+| Data type        | Cache TTL |
+|-----------------|-----------|
+| Prospect data   | 30 days   |
+| Company data    | 90 days   |
+| Decision makers | 60 days   |
+
+Caching is scoped to your account and product — different users never share cached data,
+even for the same email address.
+
+## Product personalisation
+
+Each API key is tied to a **product context** — your product's name, description,
+key features, and target customers. This context is passed to Claude for every research request,
+so all AI-generated content (synergy points, discovery questions, opening talks)
+is tailored to **your specific product**, not generic sales advice.
+
+<Note>
+  To update your product context, go to [API Keys](https://call-prep-api.vercel.app/api-keys)
+  in the dashboard and edit the key's product settings.
+</Note>

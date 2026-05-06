@@ -1,0 +1,109 @@
+---
+title: Python
+description: Using the CallPrep API with Python.
+---
+
+## Installation
+
+```bash
+pip install requests python-dotenv
+```
+
+## Minimal example
+
+```python
+import os, time, requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+API_KEY = os.getenv('CALLPREP_API_KEY')
+BASE    = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1'
+HEADERS = {
+    'Authorization': f'Bearer {API_KEY}',
+    'Content-Type': 'application/json',
+}
+
+def research(email: str, **kwargs) -> dict:
+    # 1. Submit
+    res = requests.post(
+        f'{BASE}/research',
+        headers=HEADERS,
+        json={'email': email, **kwargs},
+    )
+    res.raise_for_status()
+    research_id = res.json()['research_id']
+
+    # 2. Poll
+    while True:
+        time.sleep(5)
+        status_res = requests.get(
+            f'{BASE}/research-status/{research_id}',
+            headers=HEADERS,
+        )
+        data = status_res.json()
+        if data['status'] == 'completed':
+            return data
+        if data['status'] == 'failed':
+            raise RuntimeError(f"Research failed: {data.get('error')}")
+
+# Usage
+result = research('john.doe@acmecorp.com', prospect_name='John Doe')
+prospect = result['data']['prospect']
+print(prospect['summary'])
+print('\n'.join(prospect['opening_talk']))
+```
+
+## With error handling
+
+```python
+from requests.exceptions import HTTPError
+
+def safe_research(email: str) -> dict | None:
+    try:
+        return research(email)
+
+    except HTTPError as e:
+        code = e.response.json().get('error')
+
+        if code in ('credits_exhausted', 'trial_limit_reached'):
+            print('Credit limit reached — upgrade your plan')
+        elif code == 'invalid_key':
+            print('Invalid API key')
+        elif code == 'invalid_email_format':
+            print(f'Invalid email: {email}')
+        else:
+            print(f'API error: {code}')
+
+        return None
+
+    except RuntimeError as e:
+        print(f'Job failed: {e}')
+        return None
+```
+
+## Batch enrichment
+
+```python
+import concurrent.futures
+
+def research_batch(emails: list[str], max_workers: int = 5) -> list[dict]:
+    results = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(safe_research, email): email for email in emails}
+        for future in concurrent.futures.as_completed(futures):
+            email  = futures[future]
+            result = future.result()
+            if result:
+                results.append({'email': email, 'data': result['data']})
+    return results
+
+# Enrich 10 prospects in parallel
+emails  = ['a@company.com', 'b@company.com', ...]
+results = research_batch(emails, max_workers=3)
+```
+
+<Warning>
+  When running batch enrichment, space out requests to avoid hitting concurrent limits.
+  A `max_workers` of 3-5 is recommended for most use cases.
+</Warning>

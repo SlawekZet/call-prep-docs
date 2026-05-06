@@ -1,0 +1,375 @@
+openapi: 3.1.0
+info:
+  title: CallPrep API
+  version: 1.2.0
+  description: |
+    Research your prospects before every sales call.
+    Submit an email address and get enriched data about the person and their company —
+    including LinkedIn activity, AI-generated insights, synergy points, discovery questions,
+    and key decision makers.
+  contact:
+    email: support@callprep.io
+    url: https://callprep.app
+  license:
+    name: Commercial
+
+servers:
+  - url: https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1
+    description: Production
+
+security:
+  - bearerAuth: []
+
+paths:
+  /research:
+    post:
+      operationId: createResearch
+      summary: Submit a research request
+      description: |
+        Submit a prospect's email address to start an enrichment job.
+        Returns immediately with a `research_id` — enrichment runs asynchronously in the background.
+        Poll `/research-status/{research_id}` until `status` is `completed`.
+      tags:
+        - Research
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResearchRequest'
+            examples:
+              minimal:
+                summary: Email only
+                value:
+                  email: john.doe@acmecorp.com
+              full:
+                summary: Full request
+                value:
+                  email: john.doe@acmecorp.com
+                  prospect_name: John Doe
+                  company_name: Acme Corp
+                  linkedin_url: https://www.linkedin.com/in/johndoe
+                  company_linkedin_url: https://www.linkedin.com/company/acme
+      responses:
+        '202':
+          description: Research job accepted and queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchAccepted'
+              example:
+                research_id: res_1a7b6e9c35a9b848
+                status: processing
+                estimated_seconds: 30
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /research-status/{research_id}:
+    get:
+      operationId: getResearchStatus
+      summary: Poll for research results
+      description: |
+        Poll this endpoint until `status` is `completed` or `failed`.
+        Recommended interval: every **5 seconds**.
+        This endpoint does **not** consume credits.
+      tags:
+        - Research
+      parameters:
+        - name: research_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: res_1a7b6e9c35a9b848
+          description: The research ID returned by POST /research
+      responses:
+        '200':
+          description: Research status and results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchStatus'
+              examples:
+                processing:
+                  summary: Still processing
+                  value:
+                    research_id: res_1a7b6e9c35a9b848
+                    status: processing
+                    estimated_seconds: 15
+                completed:
+                  summary: Completed
+                  value:
+                    research_id: res_1a7b6e9c35a9b848
+                    status: completed
+                    completed_at: "2026-05-05T10:27:08.004Z"
+                    data:
+                      prospect:
+                        name: John Doe
+                        title: VP of Sales
+                        company: Acme Corp
+                        email: john.doe@acmecorp.com
+                        linkedin_url: https://www.linkedin.com/in/johndoe
+                        summary: John is VP of Sales at Acme Corp, leading a 40-person enterprise team.
+                        opening_talk:
+                          - Your recent post about reducing sales cycles resonated — that's exactly what CallPrep solves.
+                      company:
+                        name: Acme Corp
+                        industry: software
+                        hq: San Francisco, US
+                        employees: "180"
+                        synergy_points:
+                          - CallPrep eliminates manual pre-call research for Acme's SDR team.
+                failed:
+                  summary: Failed
+                  value:
+                    research_id: res_1a7b6e9c35a9b848
+                    status: failed
+                    error: internal_error
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: |
+        Your API key generated from the CallPrep dashboard.
+        Format: `cp_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+  schemas:
+    ResearchRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: Prospect's work email address
+          example: john.doe@acmecorp.com
+        prospect_name:
+          type: string
+          description: Full name — improves match accuracy in data sources
+          example: John Doe
+        company_name:
+          type: string
+          description: Company name — improves match accuracy
+          example: Acme Corp
+        linkedin_url:
+          type: string
+          format: uri
+          description: Prospect's LinkedIn profile URL
+          example: https://www.linkedin.com/in/johndoe
+        company_linkedin_url:
+          type: string
+          format: uri
+          description: Company LinkedIn URL — takes priority over auto-detected
+          example: https://www.linkedin.com/company/acme
+
+    ResearchAccepted:
+      type: object
+      properties:
+        research_id:
+          type: string
+          description: Unique ID for this research job — use to poll status
+          example: res_1a7b6e9c35a9b848
+        status:
+          type: string
+          enum: [processing]
+          example: processing
+        estimated_seconds:
+          type: integer
+          description: Estimated time to completion in seconds
+          example: 30
+
+    ResearchStatus:
+      type: object
+      properties:
+        research_id:
+          type: string
+          example: res_1a7b6e9c35a9b848
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        error:
+          type: string
+          nullable: true
+        data:
+          $ref: '#/components/schemas/ResearchData'
+
+    ResearchData:
+      type: object
+      properties:
+        prospect:
+          $ref: '#/components/schemas/Prospect'
+        company:
+          $ref: '#/components/schemas/Company'
+        decision_makers:
+          type: array
+          items:
+            $ref: '#/components/schemas/DecisionMaker'
+          description: Only available on plans with decision_makers feature
+
+    Prospect:
+      type: object
+      properties:
+        name:           { type: string, example: John Doe }
+        title:          { type: string, example: VP of Sales }
+        company:        { type: string, example: Acme Corp }
+        email:          { type: string, example: john.doe@acmecorp.com }
+        linkedin_url:   { type: string, example: https://www.linkedin.com/in/johndoe }
+        photo:          { type: string, nullable: true }
+        last_role_start:{ type: string, example: "2022-03-01", nullable: true }
+        summary:
+          type: string
+          description: AI-generated 2-3 sentence professional summary
+        opening_talk:
+          type: array
+          items: { type: string }
+          description: 3 AI-generated conversation starters based on LinkedIn activity
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedInPost'
+          description: Up to 3 recent LinkedIn posts with AI summaries
+
+    Company:
+      type: object
+      properties:
+        name:         { type: string, example: Acme Corp }
+        description:  { type: string }
+        linkedin_url: { type: string }
+        website:      { type: string }
+        industry:     { type: string, example: software }
+        hq:           { type: string, example: "San Francisco, US" }
+        revenue:      { type: string, nullable: true }
+        employees:    { type: string, example: "180" }
+        technologies:
+          type: array
+          items: { type: string }
+        problems:
+          type: array
+          items: { type: string }
+          description: 4 problems the company solves for customers
+        services:
+          type: array
+          items: { type: string }
+          description: 4 main services or products
+        icp:
+          type: array
+          items: { type: string }
+          description: 4 Ideal Customer Profiles of the company
+        synergy_points:
+          type: array
+          items: { type: string }
+          description: 4 synergies between the company and your product
+        discovery_questions:
+          type: array
+          items: { type: string }
+          description: 3 tailored discovery questions to ask the prospect
+        news:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsItem'
+          description: Up to 3 recent news items (max 12 months old)
+        insights:
+          type: array
+          items: { type: string }
+          description: 4 competitive insights
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/LinkedInPost'
+
+    DecisionMaker:
+      type: object
+      properties:
+        full_name:       { type: string, example: Jane Smith }
+        position_title:  { type: string, example: Chief Revenue Officer }
+        linkedin_url:    { type: string }
+        picture_url:     { type: string, nullable: true }
+        location_text:   { type: string, nullable: true }
+        company_name:    { type: string }
+
+    LinkedInPost:
+      type: object
+      properties:
+        text:     { type: string }
+        posted:   { type: string }
+        post_url: { type: string, nullable: true }
+        summary:  { type: string, description: AI-generated summary }
+
+    NewsItem:
+      type: object
+      properties:
+        summary: { type: string }
+        url:     { type: string, nullable: true }
+        date:    { type: string, example: "2026-03" }
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code
+        message:
+          type: string
+          description: Human-readable error description
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalid_email:
+              value: { error: invalid_email_format }
+            missing_email:
+              value: { error: missing_email }
+
+    Unauthorized:
+      description: Missing or invalid API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            missing:
+              value: { error: missing_api_key }
+            invalid:
+              value: { error: invalid_key }
+
+    TooManyRequests:
+      description: Credit limit reached
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            exhausted:
+              value: { error: credits_exhausted, used: 50, limit: 50 }
+            trial:
+              value: { error: trial_limit_reached, used: 3, limit: 3 }
+
+    NotFound:
+      description: Research ID not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: not_found

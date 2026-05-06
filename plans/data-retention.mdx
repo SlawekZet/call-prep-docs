@@ -1,0 +1,39 @@
+---
+title: Data retention
+description: How long CallPrep stores your enriched data and GDPR compliance.
+---
+
+## Cached data TTLs
+
+| Data type        | Cache TTL | After expiry                        |
+|-----------------|-----------|--------------------------------------|
+| Prospect data   | 30 days   | Re-fetched on next research request  |
+| Company data    | 90 days   | Re-fetched on next research request  |
+| Decision makers | 60 days   | Re-fetched on next research request  |
+
+## Research job data
+
+Research jobs and their results are retained for **90 days** after completion.
+After that, the result payload is cleared but the job record (ID, status, timestamps) is kept
+for billing and audit purposes.
+
+## Research logs
+
+Pipeline execution logs (API call counts, costs per step, duration) are retained for **12 months**.
+
+## Error logs
+
+Error logs are retained for **6 months**.
+
+## GDPR
+
+CallPrep processes personal data (prospect names, email addresses, LinkedIn profiles)
+on your behalf as a **data processor**. You are the data controller.
+
+Key points:
+- Data is stored in the EU (Supabase EU West region)
+- You can delete all data for a specific prospect by contacting [support@callprep.io](mailto:support@callprep.io)
+- Account deletion removes all associated data within 30 days (per your request)
+- We do not sell or share data with third parties
+
+For a Data Processing Agreement (DPA), contact [support@callprep.io](mailto:support@callprep.io).

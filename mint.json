@@ -1,0 +1,154 @@
+{
+  "name": "CallPrep API",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg",
+    "href": "https://callprep.app"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#818cf8",
+    "dark": "#4f46e5",
+    "anchors": {
+      "from": "#6366f1",
+      "to": "#8b5cf6"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "Dashboard",
+      "url": "https://call-prep-api.vercel.app/overview"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get API Key",
+    "url": "https://call-prep-api.vercel.app/api-keys"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Integrations",
+      "url": "integrations"
+    },
+    {
+      "name": "Changelog",
+      "url": "changelog"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Dashboard",
+      "icon": "chart-line",
+      "url": "https://call-prep-api.vercel.app"
+    },
+    {
+      "name": "Status",
+      "icon": "signal",
+      "url": "https://status.callprep.app"
+    },
+    {
+      "name": "Support",
+      "icon": "envelope",
+      "url": "mailto:support@callprep.io"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction/overview",
+        "introduction/quickstart",
+        "introduction/how-it-works"
+      ]
+    },
+    {
+      "group": "Authentication",
+      "pages": [
+        "authentication/api-keys",
+        "authentication/rate-limits"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/post-research",
+        "api-reference/get-research-status",
+        "api-reference/response-fields",
+        "api-reference/errors"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/polling-best-practices",
+        "guides/handling-errors",
+        "guides/caching-behavior"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "integrations/n8n",
+        "integrations/make",
+        "integrations/zapier",
+        "integrations/hubspot",
+        "integrations/slack"
+      ]
+    },
+    {
+      "group": "SDKs & Examples",
+      "pages": [
+        "sdks/nodejs",
+        "sdks/python",
+        "sdks/curl"
+      ]
+    },
+    {
+      "group": "Plans & Limits",
+      "pages": [
+        "plans/overview",
+        "plans/credits",
+        "plans/data-retention"
+      ]
+    },
+    {
+      "group": "Changelog",
+      "pages": [
+        "changelog/v1-2-0",
+        "changelog/v1-1-0",
+        "changelog/v1-0-0"
+      ]
+    },
+    {
+      "group": "Support",
+      "pages": [
+        "support/faq",
+        "support/contact"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "linkedin": "https://linkedin.com/company/callprep"
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true
+  },
+  "search": {
+    "prompt": "Search documentation..."
+  },
+  "api": {
+    "baseUrl": "https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1",
+    "auth": {
+      "method": "bearer"
+    },
+    "playground": {
+      "mode": "show"
+    }
+  },
+  "openapi": "openapi.yaml"
+}

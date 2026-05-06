@@ -1,0 +1,111 @@
+---
+title: Errors
+description: Complete reference of all error codes returned by the CallPrep API.
+---
+
+All errors return a JSON body with an `error` field containing a machine-readable code.
+
+```json
+{
+  "error": "credits_exhausted",
+  "used": 50,
+  "limit": 50
+}
+```
+
+## HTTP status codes
+
+| Status | Meaning                              |
+|--------|--------------------------------------|
+| `202`  | Request accepted (POST /research)    |
+| `200`  | Success (GET /research-status)       |
+| `400`  | Bad request — invalid parameters     |
+| `401`  | Unauthorized — missing or invalid key|
+| `404`  | Not found — research ID doesn't exist|
+| `429`  | Too many requests — credits exhausted|
+| `500`  | Internal server error                |
+
+## Error codes
+
+### Authentication errors (401)
+
+| Code              | Description                                    |
+|------------------|------------------------------------------------|
+| `missing_api_key` | No `Authorization` header provided             |
+| `invalid_key`     | Key not found, revoked, or belongs to another account |
+
+### Request errors (400)
+
+| Code                  | Description                             |
+|----------------------|-----------------------------------------|
+| `missing_email`       | `email` field is required               |
+| `invalid_email_format`| Email address is not valid              |
+| `missing_key_id`      | API key ID not found in request         |
+| `api_key_has_no_product` | The key has no product context — regenerate it |
+
+### Credit errors (429)
+
+| Code                   | Description                                       |
+|-----------------------|---------------------------------------------------|
+| `credits_exhausted`    | Monthly credits are fully used                    |
+| `trial_limit_reached`  | Free plan 3-credit limit reached                  |
+
+Response body includes:
+```json
+{
+  "error": "credits_exhausted",
+  "used": 50,
+  "limit": 50
+}
+```
+
+### Not found (404)
+
+| Code        | Description                                    |
+|------------|------------------------------------------------|
+| `not_found` | The `research_id` does not exist or belongs to a different account |
+
+### Research job errors
+
+These appear in the `error` field when `status` is `failed`:
+
+| Code             | Description                                              |
+|-----------------|----------------------------------------------------------|
+| `internal_error` | An unexpected error occurred in the pipeline             |
+| `timeout`        | The job exceeded maximum processing time (auto-retryable)|
+
+## Handling errors
+
+```javascript
+const res  = await fetch(`${BASE_URL}/research`, { ... });
+const data = await res.json();
+
+if (!res.ok) {
+  switch (data.error) {
+    case 'credits_exhausted':
+      console.error(`Out of credits: ${data.used}/${data.limit}`);
+      // Notify user to upgrade
+      break;
+    case 'invalid_key':
+      console.error('Invalid API key — check your credentials');
+      break;
+    case 'invalid_email_format':
+      console.error('Invalid email address provided');
+      break;
+    default:
+      console.error('API error:', data.error);
+  }
+  return;
+}
+```
+
+## Retrying failed jobs
+
+If a research job returns `status: failed`, you can resubmit the same request.
+A new credit will be consumed. If failures persist for the same email,
+please contact [support@callprep.io](mailto:support@callprep.io).
+
+<Note>
+  Jobs that fail due to a timeout (infrastructure issue) are eligible for a credit refund.
+  Contact support with the `research_id` to request a refund.
+</Note>

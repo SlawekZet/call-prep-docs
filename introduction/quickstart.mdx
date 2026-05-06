@@ -1,0 +1,128 @@
+---
+title: Quickstart
+description: Make your first research request in under 5 minutes.
+---
+
+## 1. Generate an API key
+
+Go to the [CallPrep dashboard](https://call-prep-api.vercel.app/api-keys) and create an API key.
+You'll be asked to describe your product — this context is used to personalise AI insights.
+
+<Note>
+  Keep your API key secret. Never expose it in client-side code or public repositories.
+</Note>
+
+## 2. Submit a research request
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "john.doe@acmecorp.com" }'
+```
+
+**Response:**
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "processing",
+  "estimated_seconds": 30
+}
+```
+
+## 3. Poll for results
+
+Use the `research_id` to check the status every 5 seconds until `status` is `completed`.
+
+```bash
+curl \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/res_1a7b6e9c35a9b848 \
+  -H "Authorization: Bearer cp_live_..."
+```
+
+**Response when completed:**
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "completed",
+  "completed_at": "2026-05-05T10:27:08.004Z",
+  "data": {
+    "prospect": {
+      "name": "John Doe",
+      "title": "VP of Sales",
+      "summary": "John is VP of Sales at Acme Corp...",
+      "opening_talk": [
+        "Your post about reducing sales cycles resonated...",
+        ...
+      ]
+    },
+    "company": { ... },
+    "decision_makers": [ ... ]
+  }
+}
+```
+
+## Complete Node.js example
+
+```javascript
+const API_KEY = 'cp_live_...';
+const BASE_URL = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+
+async function researchProspect(email) {
+  // 1. Submit
+  const res = await fetch(`${BASE_URL}/research`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email }),
+  });
+  const { research_id } = await res.json();
+  console.log('Research started:', research_id);
+
+  // 2. Poll until completed
+  while (true) {
+    await new Promise(r => setTimeout(r, 5000));
+
+    const statusRes = await fetch(`${BASE_URL}/research-status/${research_id}`, {
+      headers: { 'Authorization': `Bearer ${API_KEY}` },
+    });
+    const data = await statusRes.json();
+
+    if (data.status === 'completed') return data;
+    if (data.status === 'failed') throw new Error(data.error);
+
+    console.log('Still processing...');
+  }
+}
+
+// Usage
+const result = await researchProspect('john.doe@acmecorp.com');
+console.log(result.data.prospect.opening_talk);
+```
+
+<Tip>
+  Typical completion time is **20–60 seconds** depending on data availability.
+  If cached data exists, results return in under 2 seconds.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="lock" href="/authentication/api-keys">
+    Learn about API key best practices
+  </Card>
+  <Card title="Response fields" icon="list" href="/api-reference/response-fields">
+    Full reference of all returned fields
+  </Card>
+  <Card title="Handling errors" icon="triangle-exclamation" href="/guides/handling-errors">
+    How to handle errors gracefully
+  </Card>
+  <Card title="n8n integration" icon="plug" href="/integrations/n8n">
+    Automate with n8n templates
+  </Card>
+</CardGroup>
