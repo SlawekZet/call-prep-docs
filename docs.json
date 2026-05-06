@@ -67,10 +67,7 @@
     },
     {
       "group": "Authentication",
-      "pages": [
-        "authentication/api-keys",
-        "authentication/rate-limits"
-      ]
+      "pages": ["authentication/api-keys", "authentication/rate-limits"]
     },
     {
       "group": "API Reference",
@@ -101,34 +98,19 @@
     },
     {
       "group": "SDKs & Examples",
-      "pages": [
-        "sdks/nodejs",
-        "sdks/python",
-        "sdks/curl"
-      ]
+      "pages": ["sdks/nodejs", "sdks/python", "sdks/curl"]
     },
     {
       "group": "Plans & Limits",
-      "pages": [
-        "plans/overview",
-        "plans/credits",
-        "plans/data-retention"
-      ]
+      "pages": ["plans/overview", "plans/credits", "plans/data-retention"]
     },
     {
       "group": "Changelog",
-      "pages": [
-        "changelog/v1-2-0",
-        "changelog/v1-1-0",
-        "changelog/v1-0-0"
-      ]
+      "pages": ["changelog/v1-2-0", "changelog/v1-1-0", "changelog/v1-0-0"]
     },
     {
       "group": "Support",
-      "pages": [
-        "support/faq",
-        "support/contact"
-      ]
+      "pages": ["support/faq", "support/contact"]
     }
   ],
   "footerSocials": {
