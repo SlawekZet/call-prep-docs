@@ -58,11 +58,7 @@
           },
           {
             "group": "Guides",
-            "pages": [
-              "guides/polling-best-practices",
-              "guides/handling-errors",
-              "guides/caching-behavior"
-            ]
+            "pages": ["guides/handling-errors"]
           },
           {
             "group": "SDKs & Examples",

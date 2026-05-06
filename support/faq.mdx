@@ -6,54 +6,78 @@ description: Frequently asked questions about the CallPrep API.
 <AccordionGroup>
 
 <Accordion title="How long does a research request take?">
-Typically **20–60 seconds** for a full research run.
-If data for the prospect or company is already cached, results return in under 2 seconds.
+  Typically **20–60 seconds**. If the prospect was recently researched, results
+  may return much faster — sometimes in under 2 seconds.
 </Accordion>
 
 <Accordion title="What happens if a prospect can't be found?">
-If no match is found via Apollo or PDL, the pipeline still enriches the company
-via the email domain and generates AI insights from available data.
-The `status` will be `completed` but some fields like `summary` or `opening_talk`
-may be `null`.
+  If no data is found for the provided email, the pipeline still attempts to
+  enrich the company via the email domain and generate AI insights from
+  available data. The `status` will still be `completed`, but some fields like
+  `summary` or `opening_talk` may be `null`.
 </Accordion>
 
 <Accordion title="Does polling GET /research-status consume credits?">
-No. Only `POST /research` consumes 1 credit. You can poll as many times as needed.
+  No. Only `POST /research` consumes 1 credit. You can poll `GET
+  /research-status` as many times as needed without any credit impact.
 </Accordion>
 
 <Accordion title="Can I submit the same email multiple times?">
-Yes. CallPrep caches data per `(email, product)` combination.
-Subsequent requests return cached data immediately without calling external APIs.
-A credit is still consumed per request — but the response is near-instant.
+  Yes. CallPrep caches enriched data per `(email, product)` combination.
+  Subsequent requests for the same email return data much faster. A credit is
+  still consumed per request — but the response may be near-instant.
 </Accordion>
 
-<Accordion title="What languages are supported for AI output?">
-AI-generated fields are output in the language set in your account preferences.
-Supported: English, Polish, German, French, Spanish, Italian, Portuguese, Dutch.
-Source data from external APIs is always translated to your preferred language.
+<Accordion title="What languages are supported for AI-generated content?">
+  All AI-generated fields (`summary`, `opening_talk`, `synergy_points`, etc.)
+  are generated in the language set in your account preferences. Supported
+  languages: English, Polish, German, French, Spanish, Italian, Portuguese,
+  Dutch. Source data is always translated to your preferred language.
 </Accordion>
 
 <Accordion title="Are decision makers available on all plans?">
-No. Decision makers are a **plan-gated feature** available on Growth and Scale plans.
-If your plan doesn't include this feature, `decision_makers` will be an empty array.
+  No. Decision makers are a **plan-gated feature** available on Growth and Scale
+  plans. If your plan doesn't include this feature, `decision_makers` will be an
+  empty array. You can check your plan on the
+  [Billing](https://call-prep-api.vercel.app/billing) page.
 </Accordion>
 
 <Accordion title="What is company_linkedin_url used for?">
-By default, CallPrep auto-detects the company LinkedIn URL from enrichment data.
-Providing `company_linkedin_url` in your request overrides auto-detection —
-useful when a company has multiple LinkedIn pages or the prospect's profile
-doesn't link to the correct one.
+  By default, CallPrep auto-detects the company LinkedIn URL from the enrichment
+  data. Providing `company_linkedin_url` in your request overrides
+  auto-detection — useful when the prospect's profile doesn't link to the
+  correct company page.
 </Accordion>
 
 <Accordion title="Is my data shared between users?">
-No. All enriched data is scoped to your account and product.
-Different users never see each other's data, even for the same email address.
+  No. All enriched data is scoped to your account and product. Different users
+  never see each other's data, even for the same email address.
 </Accordion>
 
 <Accordion title="What should I do if status stays in 'processing' for a long time?">
-If `status` remains `processing` for more than 3 minutes, the job will automatically
-transition to `failed`. You can then resubmit the same request.
-If this happens repeatedly, please contact [support@callprep.io](mailto:support@callprep.io).
+  If `status` remains `processing` for more than 3 minutes, the job will
+  automatically transition to `failed`. You can then resubmit the same request.
+  If this happens repeatedly, please contact
+  [support@callprep.io](mailto:support@callprep.io) with the `research_id`.
+</Accordion>
+
+<Accordion title="Can I get a refund if a research job fails?">
+  Yes — credits are refunded automatically when a job fails due to an
+  infrastructure error. For other cases, contact
+  [support@callprep.io](mailto:support@callprep.io) with the `research_id`.
+</Accordion>
+
+<Accordion title="What is the synergy_points field?">
+  `synergy_points` is an AI-generated list of 4 connections between the
+  prospect's company and **your product** — based on the product context tied to
+  your API key. This field is unique to CallPrep and personalised per API key,
+  not generic advice.
+</Accordion>
+
+<Accordion title="How do I update my product context?">
+  Go to [API Keys](https://call-prep-api.vercel.app/api-keys) in the dashboard,
+  find your key, and edit the product settings. Changes apply to all future
+  research requests using that key. Existing cached data is not affected.
 </Accordion>
 
 </AccordionGroup>
