@@ -1,25 +1,33 @@
 ---
 title: Data retention
-description: How long CallPrep stores your enriched data and GDPR compliance.
+description: How long CallPrep stores enriched data and how GDPR applies.
 ---
 
-## Cached data TTLs
+## Prospect and company data
 
-| Data type        | Cache TTL | After expiry                        |
-|-----------------|-----------|--------------------------------------|
-| Prospect data   | 30 days   | Re-fetched on next research request  |
-| Company data    | 90 days   | Re-fetched on next research request  |
-| Decision makers | 60 days   | Re-fetched on next research request  |
+Enriched prospect and company data is **stored indefinitely** — we do not automatically
+delete it. Data is refreshed (overwritten) when a new research request is submitted
+after the refresh window has elapsed.
 
-## Research job data
+| Data type       | Refresh window | On refresh                                |
+| --------------- | -------------- | ----------------------------------------- |
+| Prospect data   | 30 days        | Previous record overwritten with new data |
+| Company data    | 90 days        | Previous record overwritten with new data |
+| Decision makers | 60 days        | Previous record overwritten with new data |
 
-Research jobs and their results are retained for **90 days** after completion.
-After that, the result payload is cleared but the job record (ID, status, timestamps) is kept
-for billing and audit purposes.
+Within the refresh window, repeated research requests return the existing enriched data
+immediately — no new enrichment is run.
+
+<Note>
+  If a prospect or company contacts you with a data deletion request under GDPR,
+  contact us at [hello@callprep.app](mailto:hello@callprep.app) and we will
+  permanently delete all data associated with that person or company from our
+  systems.
+</Note>
 
 ## Research logs
 
-Pipeline execution logs (API call counts, costs per step, duration) are retained for **12 months**.
+Pipeline execution logs (costs per step, duration, statuses) are retained for **12 months**.
 
 ## Error logs
 
@@ -28,12 +36,16 @@ Error logs are retained for **6 months**.
 ## GDPR
 
 CallPrep processes personal data (prospect names, email addresses, LinkedIn profiles)
-on your behalf as a **data processor**. You are the data controller.
+on your behalf as a **data processor**. You — as the company using the API — are
+the **data controller** and are responsible for ensuring you have a lawful basis
+for processing prospect data.
 
 Key points:
-- Data is stored in the EU (Supabase EU West region)
-- You can delete all data for a specific prospect by contacting [support@callprep.io](mailto:support@callprep.io)
-- Account deletion removes all associated data within 30 days (per your request)
-- We do not sell or share data with third parties
 
-For a Data Processing Agreement (DPA), contact [support@callprep.io](mailto:support@callprep.io).
+- Data is stored in the EU (Supabase EU West region)
+- Prospect and company data is scoped to your account — other users never access your data
+- We do not sell or share enriched data with third parties
+- Deletion requests from prospects should be forwarded to [hello@callprep.app](mailto:hello@callprep.app)
+- Account deletion removes all associated enriched data within 30 days of your request
+
+For a Data Processing Agreement (DPA), contact [hello@callprep.app](mailto:hello@callprep.app).

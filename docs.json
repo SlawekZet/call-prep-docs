@@ -1,6 +1,16 @@
 {
   "name": "CallPrep API",
   "theme": "mint",
+  "topbarLinks": [
+    {
+      "name": "Dashboard",
+      "url": "https://call-prep-api.vercel.app/overview"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get API Key",
+    "url": "https://call-prep-api.vercel.app/api-keys"
+  },
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg",
@@ -11,16 +21,6 @@
     "primary": "#6366f1",
     "light": "#818cf8",
     "dark": "#4f46e5"
-  },
-  "topbarLinks": [
-    {
-      "name": "Dashboard",
-      "url": "https://call-prep-api.vercel.app/overview"
-    }
-  ],
-  "topbarCtaButton": {
-    "name": "Get API Key",
-    "url": "https://call-prep-api.vercel.app/api-keys"
   },
   "anchors": [
     {
@@ -36,7 +36,7 @@
     {
       "name": "Support",
       "icon": "envelope",
-      "url": "mailto:support@callprep.io"
+      "url": "mailto:hello@callprep.app"
     }
   ],
   "navigation": {

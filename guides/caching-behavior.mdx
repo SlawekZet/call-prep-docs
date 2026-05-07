@@ -10,19 +10,20 @@ When you submit a research request for an email that was recently enriched,
 we return cached data immediately — no external API calls are made.
 
 This means:
+
 - **Response time drops from ~30s to <2s**
 - **No additional data source costs are incurred**
 - **A credit is still consumed** per request (you're using the service)
 
 ## Cache TTLs
 
-| Data type        | Cache TTL | Notes                                           |
-|-----------------|-----------|--------------------------------------------------|
-| Prospect data   | 30 days   | Name, title, LinkedIn URL, employment history    |
-| Company data    | 90 days   | Industry, description, tech stack, HQ            |
-| Decision makers | 60 days   | Key people at the company                        |
+| Data type       | Cache TTL     | Notes                                                           |
+| --------------- | ------------- | --------------------------------------------------------------- |
+| Prospect data   | 30 days       | Name, title, LinkedIn URL, employment history                   |
+| Company data    | 90 days       | Industry, description, tech stack, HQ                           |
+| Decision makers | 60 days       | Key people at the company                                       |
 | AI insights     | Same as above | Summary, opening talks, synergy points — regenerated if missing |
-| LinkedIn posts  | Same as above | Re-fetched if not present in cache              |
+| LinkedIn posts  | Same as above | Re-fetched if not present in cache                              |
 
 ## Granular cache flags
 
@@ -46,12 +47,12 @@ so the same email can be researched twice with different insights.
 
 There is currently no way to bypass the cache via the API.
 If you need fresh data for a prospect whose cache is still valid,
-contact [support@callprep.io](mailto:support@callprep.io).
+contact [hello@callprep.app](mailto:hello@callprep.app).
 
 <Tip>
-  Cache TTLs are designed to balance freshness with cost.
-  For most sales use cases, 30-day prospect data is fresh enough —
-  job titles and companies change less frequently than that.
+  Cache TTLs are designed to balance freshness with cost. For most sales use
+  cases, 30-day prospect data is fresh enough — job titles and companies change
+  less frequently than that.
 </Tip>
 
 ## Identifying cache hits in the response
@@ -76,6 +77,6 @@ The `_meta` object in the response indicates whether data came from cache:
 ```
 
 <Note>
-  The `_meta` field is informational and may change between versions.
-  Don't build business logic that depends on it.
+  The `_meta` field is informational and may change between versions. Don't
+  build business logic that depends on it.
 </Note>
