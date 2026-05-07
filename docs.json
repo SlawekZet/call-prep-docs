@@ -9,6 +9,7 @@
       }
     ],
     "primary": {
+      "type": "button",
       "label": "Get API Key",
       "href": "https://call-prep-api.vercel.app/api-keys"
     }
