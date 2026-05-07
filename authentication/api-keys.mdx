@@ -14,14 +14,14 @@ description: How to generate, manage, and secure your CallPrep API keys.
 Your key will be shown **once**. Copy it immediately and store it securely.
 
 <Warning>
-  If you lose your API key, you'll need to generate a new one.
-  There is no way to retrieve an existing key after it's been shown.
+  If you lose your API key, you'll need to generate a new one. There is no way
+  to retrieve an existing key after it's been shown.
 </Warning>
 
 ## Product context
 
 Each API key is tied to a **product context** — the name, description, key features,
-and target customers of your product. This context is sent to Claude AI for every research request,
+and target customers of your product. This context is sent to an AI agent for every research request,
 so all generated insights (synergy points, discovery questions, opening talks)
 are personalised to your specific product.
 
@@ -47,12 +47,12 @@ curl -H "Authorization: Bearer cp_live_..." \
 
 ## Key limits by plan
 
-| Plan    | API keys |
-|---------|----------|
-| Free    | 1        |
-| Starter | 3        |
-| Growth  | 10       |
-| Scale   | Unlimited|
+| Plan    | API keys  |
+| ------- | --------- |
+| Free    | 1         |
+| Starter | 3         |
+| Growth  | 10        |
+| Scale   | Unlimited |
 
 ## Security best practices
 
@@ -65,6 +65,7 @@ curl -H "Authorization: Bearer cp_live_..." \
     # .env
     CALLPREP_API_KEY=cp_live_...
     ```
+
   </Accordion>
   <Accordion title="Rotate keys regularly">
     Generate a new key periodically and update your integrations.
