@@ -1,0 +1,222 @@
+---
+title: GET /research-status/{research_id}
+description: Poll for research results using the research_id returned by POST /research.
+---
+
+## Overview
+
+Poll this endpoint until `status` is `completed` or `failed`.
+Recommended polling interval: every **5 seconds**.
+
+This endpoint does **not** consume credits — poll as many times as needed.
+
+**Base URL:** `https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1`
+
+---
+
+## Request
+
+```http
+GET /research-status/{research_id}
+Authorization: Bearer cp_live_...
+```
+
+### Path parameters
+
+| Parameter     | Type   | Required | Description |
+|--------------|--------|----------|-------------|
+| `research_id` | string | ✅       | The `research_id` returned by `POST /research` |
+
+### Example
+
+```bash
+curl \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/res_1a7b6e9c35a9b848 \
+  -H "Authorization: Bearer cp_live_..."
+```
+
+---
+
+## Response — processing
+
+**HTTP 200**
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "processing",
+  "estimated_seconds": 15
+}
+```
+
+Continue polling until `status` changes to `completed` or `failed`.
+
+---
+
+## Response — completed
+
+**HTTP 200**
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "completed",
+  "completed_at": "2026-05-03T08:27:08.004+00:00",
+  "data": {
+    "prospect": {
+      "id": 42,
+      "name": "Sarah Mitchell",
+      "title": "VP of Sales",
+      "company": "Acme Corp",
+      "email": "sarah.mitchell@acmecorp.com",
+      "linkedin_url": "https://www.linkedin.com/in/sarah-mitchell/",
+      "photo": "https://media.licdn.com/dms/image/...",
+      "last_role_start": "2024-03-01",
+      "summary": "Sarah Mitchell is VP of Sales at Acme Corp, leading a 40-person enterprise sales team. Her LinkedIn activity shows a focus on outbound pipeline efficiency and CRM adoption, suggesting an interest in tools that reduce manual research overhead for her reps.",
+      "opening_talk": [
+        "Your post about reducing sales cycle length through better pre-call prep resonated — that's exactly the problem CallPrep solves for teams like yours.",
+        "You mentioned your reps spend 45 minutes on average researching before each call — we can cut that to under 60 seconds.",
+        "Your comment on LinkedIn ROI for outbound caught my attention — CallPrep pulls live LinkedIn activity into every research brief automatically."
+      ],
+      "posts": [
+        {
+          "text": "We cut our average sales cycle by 18% last quarter. The change? Requiring reps to complete a pre-call brief before every discovery call...",
+          "posted": "2026-04-21 09:15:00",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:...",
+          "reshared": false,
+          "summary": "Reduced sales cycle 18% by mandating pre-call research briefs before every discovery call."
+        }
+      ]
+    },
+    "company": {
+      "id": 42,
+      "name": "Acme Corp",
+      "description": "Acme Corp is a B2B SaaS platform for enterprise sales teams, offering CRM integrations, pipeline analytics, and AI-assisted outreach across 30+ countries.",
+      "linkedin_url": "https://www.linkedin.com/company/acmecorp/",
+      "website": "https://acmecorp.com",
+      "industry": "software",
+      "hq": "San Francisco, US",
+      "revenue": "24M",
+      "employees": "180",
+      "technologies": ["Salesforce", "HubSpot", "AWS", "Stripe", "Segment"],
+      "problems": [
+        "Enterprise sales teams waste hours on manual prospect research before each call",
+        "Reps lack competitive intelligence when entering discovery calls with informed buyers",
+        "Sales managers struggle to ensure consistent pre-call preparation across distributed teams",
+        "Outbound sequences lack personalization due to limited time for prospect research"
+      ],
+      "services": [
+        "AI-powered pre-call research briefs generated from LinkedIn, company news, and CRM data",
+        "Competitive intelligence alerts when prospects engage with competitor content",
+        "Sales playbook automation that tailors discovery questions to prospect personas",
+        "CRM-native workflow that surfaces research directly inside Salesforce and HubSpot"
+      ],
+      "icp": [
+        "Enterprise SaaS companies with 50+ person sales teams running high-volume outbound",
+        "RevOps leaders standardizing pre-call processes across distributed sales orgs",
+        "Sales managers at B2B companies with ACV over $20k requiring consultative selling",
+        "SDR teams doing account-based outreach where personalization directly impacts reply rates"
+      ],
+      "synergy_points": [
+        "CallPrep directly eliminates Acme Corp's core pain point — reps spending 45+ minutes on pre-call research — by automating enrichment in under 60 seconds.",
+        "Acme Corp's Salesforce and HubSpot integrations align with CallPrep's CRM-native positioning, enabling seamless adoption without workflow disruption.",
+        "Acme Corp sells to enterprise sales teams — the exact buyers who understand and budget for sales productivity tools, reducing education overhead in the sales cycle.",
+        "Acme Corp's focus on outbound personalization makes CallPrep's LinkedIn post analysis and opening talk generation directly relevant to their reps' daily workflow."
+      ],
+      "discovery_questions": [
+        "You've invested in Salesforce and HubSpot — how are your reps currently pulling pre-call intelligence from those systems before discovery calls, and where does the process break down?",
+        "With 180 people and a distributed team, how do you ensure consistent pre-call preparation standards across your SDR and AE org — is that a process or a tooling challenge?",
+        "Your LinkedIn post mentioned cutting sales cycles by 18% through pre-call briefs — what's the biggest bottleneck preventing you from scaling that behavior across the full team?"
+      ],
+      "clients": [{ "count": "1,200+" }],
+      "news": [
+        {
+          "summary": "Acme Corp raised a $12M Series A to expand enterprise integrations and grow its European GTM team.",
+          "url": "https://techcrunch.com/2026/03/acme-corp-series-a",
+          "date": "2026-03"
+        }
+      ],
+      "insights": [
+        "Competitors like Gong and Chorus position on call recording and post-call analytics — Acme Corp's gap is pre-call intelligence, which CallPrep fills directly.",
+        "Market gap: most sales intelligence tools provide contact data but not contextual, AI-generated talking points — CallPrep's differentiation is actionable output, not raw data.",
+        "CallPrep gives Acme Corp reps a measurable edge: personalized opening lines grounded in prospect LinkedIn activity have 3x higher engagement in discovery calls.",
+        "Key concern: Acme Corp may already evaluate competing tools for pre-call features — reps need to position CallPrep as complementary enrichment, not a competing workflow tool."
+      ]
+    },
+    "decision_makers": [
+      {
+        "id": 1,
+        "full_name": "Sarah Mitchell",
+        "position_title": "VP of Sales",
+        "linkedin_url": "https://www.linkedin.com/in/sarah-mitchell/",
+        "picture_url": "https://media.licdn.com/dms/image/...",
+        "location_text": "San Francisco, CA",
+        "company_name": "Acme Corp"
+      },
+      {
+        "id": 2,
+        "full_name": "James Okafor",
+        "position_title": "Chief Revenue Officer",
+        "linkedin_url": "https://www.linkedin.com/in/james-okafor/",
+        "picture_url": "https://media.licdn.com/dms/image/...",
+        "location_text": "San Francisco, CA",
+        "company_name": "Acme Corp"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Response — failed
+
+**HTTP 200**
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "failed",
+  "error": "internal_error"
+}
+```
+
+You can resubmit the same request — a new credit will be consumed.
+If the failure was caused by an infrastructure error, the credit is refunded automatically.
+
+---
+
+## Status values
+
+| Status       | Meaning                          | Action           |
+|-------------|----------------------------------|------------------|
+| `queued`    | Job waiting to be picked up      | Continue polling  |
+| `processing`| Enrichment in progress           | Continue polling  |
+| `completed` | All enrichment steps finished    | Use the data      |
+| `failed`    | Unrecoverable error occurred     | Resubmit request  |
+
+---
+
+## Error responses
+
+**401 — Missing or invalid API key**
+```json
+{ "error": "invalid_key" }
+```
+
+**404 — Research ID not found**
+```json
+{ "error": "not_found" }
+```
+
+---
+
+<Tip>
+  For a production-ready polling implementation with timeouts and error handling,
+  see the [Handling errors](/guides/handling-errors) guide.
+</Tip>
+
+<Note>
+  For a full description of all fields in the `data` object,
+  see the [Response fields](/api-reference/response-fields) reference.
+</Note>

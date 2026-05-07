@@ -1,0 +1,120 @@
+---
+title: POST /research
+description: Submit a prospect email to start an enrichment job.
+---
+
+## Overview
+
+Submit a prospect's email address to start an enrichment job.
+Returns immediately with a `research_id` — enrichment runs asynchronously in the background.
+Poll [`GET /research-status/{research_id}`](/api-reference/get-research-status) until `status` is `completed`.
+
+**Base URL:** `https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1`
+
+---
+
+## Request
+
+```http
+POST /research
+Authorization: Bearer cp_live_...
+Content-Type: application/json
+```
+
+### Body parameters
+
+| Parameter              | Type   | Required | Description |
+|-----------------------|--------|----------|-------------|
+| `email`               | string | ✅        | Prospect's work email address |
+| `prospect_name`       | string | ❌        | Full name — improves match accuracy |
+| `company_name`        | string | ❌        | Company name — improves match accuracy |
+| `linkedin_url`        | string | ❌        | Prospect's LinkedIn profile URL |
+| `company_linkedin_url`| string | ❌        | Company LinkedIn URL — overrides auto-detected |
+
+### Minimal request
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "sarah.mitchell@acmecorp.com" }'
+```
+
+### Full request
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "sarah.mitchell@acmecorp.com",
+    "prospect_name": "Sarah Mitchell",
+    "company_name": "Acme Corp",
+    "linkedin_url": "https://www.linkedin.com/in/sarah-mitchell/",
+    "company_linkedin_url": "https://www.linkedin.com/company/acmecorp/"
+  }'
+```
+
+---
+
+## Response
+
+**HTTP 202 — Accepted**
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "processing",
+  "estimated_seconds": 30
+}
+```
+
+| Field               | Description |
+|--------------------|-------------|
+| `research_id`      | Unique ID for this job — use it to poll for results |
+| `status`           | Always `processing` on initial response |
+| `estimated_seconds`| Estimated completion time in seconds |
+
+---
+
+## Error responses
+
+**401 — Missing or invalid API key**
+```json
+{ "error": "missing_api_key" }
+{ "error": "invalid_key" }
+```
+
+**400 — Invalid request**
+```json
+{ "error": "missing_email" }
+{ "error": "invalid_email_format" }
+```
+
+**429 — Credits exhausted**
+```json
+{
+  "error": "credits_exhausted",
+  "used": 50,
+  "limit": 50
+}
+```
+
+See the [Errors reference](/api-reference/errors) for the full list of error codes.
+
+---
+
+## Notes
+
+<Note>
+  Providing `prospect_name` and `company_name` improves match accuracy
+  and is recommended whenever you have that information available.
+</Note>
+
+<Tip>
+  After submitting, poll [`GET /research-status`](/api-reference/get-research-status)
+  every **5 seconds** until `status` is `completed`. See the
+  [Handling errors](/guides/handling-errors) guide for a production-ready polling implementation.
+</Tip>
