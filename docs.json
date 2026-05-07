@@ -4,14 +4,14 @@
   "navbar": {
     "links": [
       {
-        "label": "Dashboard",
-        "href": "https://call-prep-api.vercel.app/overview"
+        "label": "Get API Key",
+        "href": "https://call-prep-api.vercel.app/api-keys"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Get API Key",
-      "href": "https://call-prep-api.vercel.app/api-keys"
+      "label": "Dashboard",
+      "href": "https://call-prep-api.vercel.app/overview"
     }
   },
   "logo": {
