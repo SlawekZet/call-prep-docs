@@ -1,15 +1,18 @@
 {
   "name": "CallPrep API",
   "theme": "mint",
-  "topbarLinks": [
-    {
-      "name": "Dashboard",
-      "url": "https://call-prep-api.vercel.app/overview"
+  "navbar": {
+    "links": [
+      {
+        "name": "Dashboard",
+        "url": "https://call-prep-api.vercel.app/overview"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "name": "Get API Key",
+      "url": "https://call-prep-api.vercel.app/api-keys"
     }
-  ],
-  "topbarCtaButton": {
-    "name": "Get API Key",
-    "url": "https://call-prep-api.vercel.app/api-keys"
   },
   "logo": {
     "dark": "/logo/dark.svg",
