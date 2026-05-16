@@ -1,22 +1,270 @@
 ---
-title: HubSpot
-description: Sync CallPrep enrichment data directly into HubSpot contact properties.
+title: HubSpot Integration
+description: Automatically research high-score HubSpot contacts and sync AI-generated insights back to contact profiles.
 ---
 
+## Overview
+
+The HubSpot integration connects CallPrep to your CRM so your team always has enriched prospect data where they need it — directly on the HubSpot contact record.
+
+When a contact reaches your configured lead score threshold, CallPrep automatically:
+
+1. Researches the prospect using your product context
+2. Writes AI-generated insights to custom contact properties
+3. Creates a structured note on the contact record
+4. Optionally sends a Slack summary and email digest
+
 <Note>
-  The HubSpot integration is coming soon. [Join the
-  waitlist](mailto:hello@callprep.app?subject=HubSpot%20Integration) to be
-  notified.
+  The HubSpot integration is available on the **Growth** and **Scale** plans.
 </Note>
 
-## Planned features
+---
 
-- **Auto-enrich new contacts** — trigger research when a new contact is created in HubSpot
-- **Sync enriched fields** — write `summary`, `opening_talk`, `synergy_points` to custom HubSpot properties
-- **Meeting prep trigger** — auto-research attendees 30 minutes before a scheduled meeting
-- **Deal enrichment** — enrich contacts associated with open deals
+## What gets synced
 
-## Workaround using n8n
+For each researched contact, CallPrep creates a **property group** in HubSpot named after your product (e.g. _CallPrep: Juicer_) containing:
 
-Until the native integration is available, you can connect CallPrep to HubSpot using n8n.
-See the [n8n integration guide](/integrations/n8n) for details.
+| Property                | Description                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| **Status**              | Set to `completed` when research is done — prevents re-researching the same contact |
+| **Prospect Summary**    | AI-generated professional summary of the prospect                                   |
+| **Opening Talk**        | 3 personalised conversation starters                                                |
+| **Synergy Points**      | How your product maps to this company's needs                                       |
+| **Discovery Questions** | Tailored questions to ask in the call                                               |
+| **Company News**        | Recent news about the company                                                       |
+| **Company Industry**    | Industry classification                                                             |
+| **Company Employees**   | Employee count                                                                      |
+| **Enriched At**         | Timestamp of last enrichment                                                        |
+
+A **structured note** is also created on the contact with all insights formatted for quick reading.
+
+<Tip>
+  If you use CallPrep for multiple products, each product gets its own property
+  group — data never overlaps between products on the same contact.
+</Tip>
+
+---
+
+## Setup
+
+### Step 1 — Connect HubSpot
+
+Go to **Dashboard → Integrations** and click **Connect HubSpot** next to the product you want to use.
+
+You'll be redirected to HubSpot to authorise access. CallPrep requests the following permissions:
+
+- View and manage contacts
+- Create and manage contact property settings
+- Create notes
+
+After approving, you'll be redirected back to CallPrep. The integration **automatically creates the custom property group and all required fields** in your HubSpot portal — no manual setup needed.
+
+<Warning>
+  During authorisation you may see a message saying CallPrep is an unverified
+  app. This is normal for any third-party integration that hasn't completed
+  HubSpot's marketplace review process. Click **Connect app** to proceed.
+</Warning>
+
+---
+
+### Step 2 — Configure sync settings
+
+Once connected, expand **Integration Settings** to configure how the sync works.
+
+#### Schedule
+
+Choose how often CallPrep checks for new leads to research:
+
+| Option       | When it runs                            |
+| ------------ | --------------------------------------- |
+| Daily        | Every day at your chosen hour (UTC)     |
+| Twice a week | Monday and Thursday at your chosen hour |
+| Weekly       | Every Monday at your chosen hour        |
+
+#### Lead score filter
+
+CallPrep only researches contacts above a certain score threshold.
+
+**Score property** — the HubSpot contact property that holds the lead score. Defaults to `hs_lead_score` (available on paid HubSpot plans). If you use a custom scoring property, enter its internal name here.
+
+<Tip>
+  To find the internal name of a property, go to HubSpot → Settings →
+  Properties, click the property, and look for the **internal name** field
+  (usually lowercase with underscores).
+</Tip>
+
+**Minimum score** — contacts scoring below this value are skipped. Default is `70`.
+
+#### Email filters
+
+Avoid wasting research credits on contacts that won't convert:
+
+- **Skip free email providers** — skips Gmail, Yahoo, Outlook, iCloud, Proton and similar personal email domains
+- **Skip role-based mailboxes** — skips generic addresses like `info@`, `contact@`, `support@`, `sales@` and others
+
+#### Research limit
+
+The maximum number of contacts to research per sync run. You can set between 1 and 50.
+
+<Note>
+  The hard cap is **50 contacts per run** regardless of plan, to ensure
+  consistent performance. For most teams running daily syncs, a limit of 20–30
+  is sufficient.
+</Note>
+
+#### Enable / Pause
+
+Use the **Active / Paused** toggle at the top of the settings panel to turn the integration on or off at any time. This takes effect immediately — pausing will not cancel any research currently in progress.
+
+---
+
+### Step 3 — Save and enable
+
+Click **Save settings**, then toggle the integration to **Active**.
+
+The first sync will run at the next scheduled time. To trigger a sync immediately, you can save and re-save the settings — the next run time will be set to now.
+
+---
+
+## Slack notifications
+
+You can receive a summary in Slack after each sync completes.
+
+### Setting up the webhook
+
+1. Go to [api.slack.com/apps](https://api.slack.com/apps) and click **Create New App → From scratch**
+2. Under **Incoming Webhooks**, enable the feature and click **Add New Webhook to Workspace**
+3. Select the channel where you want to receive summaries and click **Allow**
+4. Copy the webhook URL (starts with `https://hooks.slack.com/services/...`)
+5. Paste it into the **Webhook URL** field in CallPrep integration settings
+
+### What you receive
+
+**One summary message** per sync:
+
+```
+CallPrep sync complete — Juicer
+12 enriched · 3 skipped · 0 failed · 15 total
+
+• jan.kowalski@firma.pl · Firma Sp. z o.o. · score 92
+• anna.nowak@company.com · Company Ltd · score 88
+...
+
+Details per contact in thread ↓
+```
+
+**One follow-up message per contact** with:
+
+- Name, title, email, and lead score
+- Company details and links (HubSpot profile, LinkedIn, website)
+- Top synergy point with your product
+- Top conversation starter
+
+---
+
+## Email summary
+
+After each sync, CallPrep sends an email digest to your account email address listing how many contacts were researched and their email addresses.
+
+To send the digest to a different address (e.g. a team inbox), enter it in the **Send to** field under Email Summary in integration settings.
+
+To disable the digest entirely, uncheck **Enable email summary**.
+
+---
+
+## Viewing sync history
+
+The **Statistics** section on the integrations page shows:
+
+- Total credits consumed by the HubSpot integration
+- Total leads fetched and researched
+- A table of the last 20 sync runs with status, contact counts, and duration
+
+---
+
+## Credits
+
+Each researched contact consumes **one credit** from your plan. Skipped contacts (filtered by email rules or below the score threshold) do not consume credits.
+
+If you run out of credits mid-sync, the remaining contacts in that run are skipped and will be picked up in the next sync once your credits reset.
+
+<Info>
+  Credit consumption for HubSpot integration follows the same rules as the API —
+  see [Credits](/plans/credits) for details on monthly limits and reset dates.
+</Info>
+
+---
+
+## Multiple products
+
+If you have more than one product in CallPrep, each product can have its own independent HubSpot integration with different settings (score threshold, schedule, filters). All products share the same HubSpot connection — you only need to authorise once.
+
+Each product creates its own property group in HubSpot, so data from different products never overlaps on the same contact.
+
+---
+
+## Disconnecting
+
+To remove the integration, click **Disconnect** on the integrations page and confirm. This will:
+
+- Remove CallPrep's access to your HubSpot account
+- Pause all active integrations
+- **Preserve** all data already written to HubSpot contact properties
+- **Preserve** your sync settings — reconnecting will restore them
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="A contact already has a high lead score — will it be researched immediately?">
+  Yes. On the next scheduled sync, any contact with a score above your threshold
+  that hasn't been researched yet (no `cp_{product}__status` property, or status
+  is not `completed`) will be included.
+</Accordion>
+
+<Accordion title="What happens if a contact is researched again later?">
+  Once a contact's status is set to `completed`, it won't be picked up again by
+  the sync. This prevents duplicate research and credit consumption. If you want
+  to re-research a contact, manually clear or change the `cp_{product}__status`
+  property in HubSpot.
+</Accordion>
+
+<Accordion title="I use a custom lead scoring property — how do I find its internal name?">
+  In HubSpot, go to **Settings → Properties → Contact properties**, search for
+  your scoring property, click on it, and look for the **Internal name** field.
+  It's usually lowercase with underscores (e.g. `combined_score_q3_2025`). Enter
+  this name in the **Score property** field in CallPrep settings.
+</Accordion>
+
+<Accordion title="The sync ran but no contacts were found — why?">
+  The most common reasons:
+  - No contacts have a value set for the configured score property
+  - All contacts above the threshold have already been researched (`status = completed`)
+  - The score property name doesn't match what's in HubSpot — double-check the internal name
+
+Check the sync history table on the integrations page — the **Fetched** column shows how many contacts were returned by HubSpot before filtering.
+
+</Accordion>
+
+<Accordion title="Can I use HubSpot integration with multiple team members?">
+  The integration is connected per CallPrep account. If your team shares a
+  CallPrep account, all syncs run under that account and consume its credits.
+  Separate team members with their own accounts would each need to connect their
+  own HubSpot integration.
+</Accordion>
+
+<Accordion title="Is my HubSpot data safe?">
+  CallPrep only reads contact records to find leads to research, and writes back
+  to the custom `cp_*` properties it creates. It does not modify any existing
+  HubSpot properties, pipelines, deals, or other CRM data.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Need help?
+
+If you run into any issues setting up the integration, contact us at [hi@callprep.app](mailto:hi@callprep.app) and we'll get back to you within one business day.

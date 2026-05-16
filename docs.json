@@ -90,6 +90,15 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Integrations",
+        "groups": [
+          {
+            "group": "Integrations",
+            "pages": ["integrations/hubspot"]
+          }
+        ]
       }
     ]
   },
