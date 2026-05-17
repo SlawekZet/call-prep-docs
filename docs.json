@@ -118,5 +118,9 @@
       "mode": "show"
     }
   },
-  "openapi": "openapi.yaml"
+  "openapi": "openapi.yaml",
+  "llms": {
+    "title": "CallPrep API Documentation",
+    "description": "Async prospect enrichment API. Submit an email, get AI-generated insights about the person and their company."
+  }
 }

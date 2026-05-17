@@ -1,0 +1,939 @@
+# CallPrep API — Knowledge Base
+
+> Source: compiled from all documentation files in the CallPrep API docs repo.
+> Version: 1.2.0 | Last updated: May 2026
+> Base URL: `https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1`
+> Website: https://callprep.app | Dashboard: https://call-prep-api.vercel.app | Support: hello@callprep.app
+
+---
+
+## Table of Contents
+
+1. [What is CallPrep?](#1-what-is-callprep)
+2. [How it works](#2-how-it-works)
+3. [Authentication](#3-authentication)
+4. [Rate limits & Credits](#4-rate-limits--credits)
+5. [API Reference](#5-api-reference)
+   - [POST /research](#post-research)
+   - [GET /research-status/{research_id}](#get-research-statusresearch_id)
+   - [Response fields reference](#response-fields-reference)
+   - [Error codes reference](#error-codes-reference)
+6. [Guides](#6-guides)
+   - [Caching behavior](#caching-behavior)
+   - [Polling best practices](#polling-best-practices)
+   - [Handling errors in production](#handling-errors-in-production)
+7. [Plans & Pricing](#7-plans--pricing)
+8. [Data retention & GDPR](#8-data-retention--gdpr)
+9. [Integrations](#9-integrations)
+   - [HubSpot](#hubspot)
+10. [Support & Contact](#11-support--contact)
+11. [FAQ](#12-faq)
+
+---
+
+## 1. What is CallPrep?
+
+CallPrep is an **async enrichment API** that researches a prospect before a sales call. You provide an email address and get enriched data about the person and their company, including LinkedIn activity, AI-generated insights, synergy points with your product, and key decision makers.
+
+### What you get for every prospect email
+
+**Prospect data**
+
+- Job title (translated to English), company, LinkedIn URL, photo
+- AI-generated professional summary
+- 3 personalised conversation starters based on LinkedIn activity
+- Up to 3 recent LinkedIn posts with AI summaries
+
+**Company data**
+
+- Industry, HQ, revenue, employee count, tech stack
+- 4 problems the company solves for customers
+- 4 synergy points with **your product** (personalised per API key)
+- 3 tailored discovery questions to ask in the call
+- Competitive insights and recent company news
+
+**Decision makers** _(Growth plan and above)_
+
+- Key people at the company (VPs, Directors, C-level)
+- Name, title, LinkedIn profile, location
+
+### How CallPrep is different
+
+- **Personalises insights to your product** — each API key is tied to your product's name, description, and target customers
+- **Combines multiple data sources** — Apollo, PDL, LinkedIn, and Claude AI
+- **Caches intelligently** — repeated lookups return instantly at no extra credit cost
+- **Translates automatically** — AI output in your preferred language (EN, PL, DE, FR, ES, IT, PT, NL)
+
+---
+
+## 2. How it works
+
+CallPrep uses an **asynchronous pipeline**. When you submit a research request, it immediately returns a `research_id` and runs enrichment in the background. You then poll `/research-status/{research_id}` every 5 seconds until `status` is `completed`.
+
+```
+POST /research  →  research_id (instant response)
+                        ↓
+              [background enrichment]
+                        ↓
+GET /research-status  →  completed + data
+```
+
+**Typical completion time:** 20–60 seconds. Cache hits return in under 2 seconds.
+
+### Product personalisation
+
+Each API key is tied to a **product context** — your product's name, description, key features, and target customers. This context is sent to an AI agent for every research request, so all generated insights (synergy points, discovery questions, opening talks) are tailored to **your specific product**, not generic sales advice.
+
+To update your product context: Dashboard → API Keys → edit the key's product settings.
+
+---
+
+## 3. Authentication
+
+### API key format
+
+```
+cp_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Keys always start with `cp_live_` followed by 42 random characters.
+
+### How to generate a key
+
+1. Go to https://call-prep-api.vercel.app/api-keys
+2. Click **Generate new key**
+3. Enter your product URL — CallPrep auto-extracts product name and description
+4. Review the generated product context
+5. Click **Create key**
+
+Your key is shown **once**. Copy it immediately. If lost, generate a new one.
+
+### Using your key
+
+Pass as a Bearer token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer cp_live_..." \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/res_xxx
+```
+
+### API key limits per plan
+
+| Plan    | API keys  |
+| ------- | --------- |
+| Free    | 1         |
+| Starter | 3         |
+| Growth  | 10        |
+| Scale   | Unlimited |
+
+### Security best practices
+
+- Never expose keys in client-side code, browser JavaScript, mobile apps, or public repositories
+- Use environment variables: `CALLPREP_API_KEY=cp_live_...`
+- Use separate keys per environment (dev / staging / production)
+- Rotate keys regularly
+- If compromised: delete immediately from dashboard, generate a new one
+
+### Revoking a key
+
+Dashboard → API Keys → find key → **Revoke**. Revocation is immediate — requests using that key return `401 invalid_key`.
+
+---
+
+## 4. Rate limits & Credits
+
+### Credit model
+
+One call to `POST /research` consumes **1 credit**. `GET /research-status` is **free** — poll as many times as needed.
+
+| Plan    | Credits/month | Price/credit |
+| ------- | ------------- | ------------ |
+| Free    | 3             | —            |
+| Starter | 50            | $0.98        |
+| Growth  | 200           | $0.75        |
+| Scale   | 600           | $0.58        |
+
+### Cache hits still consume credits
+
+When a research request returns cached data (response in under 2 seconds), 1 credit is still consumed.
+
+### Credit reset
+
+Credits reset at the start of your billing cycle (same day each month as first subscription). Unused credits **do not roll over**.
+
+### What happens when credits run out
+
+`POST /research` returns `429 credits_exhausted`. Existing data and API keys remain active. New research jobs are blocked until next billing cycle or plan upgrade.
+
+```json
+{ "error": "credits_exhausted", "used": 50, "limit": 50 }
+```
+
+### Credit alerts
+
+Enable email notifications at 75% and 95% usage: Dashboard → Settings → Notifications.
+
+### Credit refunds
+
+Automatic if a job fails due to infrastructure error. **Not refunded** when:
+
+- Prospect not found in any data source
+- AI step failed but other data was returned
+- You submitted an invalid email
+
+To dispute: contact hello@callprep.app with the `research_id`.
+
+### Concurrent requests
+
+No hard limit on concurrent requests, but the research worker processes one job per invocation. For high-volume batch enrichment, space out requests or contact for custom plans.
+
+---
+
+## 5. API Reference
+
+### POST /research
+
+Submit a prospect's email address to start an enrichment job. Returns immediately with a `research_id`.
+
+**Endpoint:** `POST https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research`
+
+**Authentication:** Bearer token
+
+#### Request body parameters
+
+| Parameter              | Type   | Required | Description                                          |
+| ---------------------- | ------ | -------- | ---------------------------------------------------- |
+| `email`                | string | ✅       | Prospect's work email address                        |
+| `prospect_name`        | string | ❌       | Full name — improves match accuracy                  |
+| `company_name`         | string | ❌       | Company name — improves match accuracy               |
+| `linkedin_url`         | string | ❌       | Prospect's LinkedIn profile URL                      |
+| `company_linkedin_url` | string | ❌       | Company LinkedIn URL — overrides auto-detected value |
+
+#### Minimal request
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{ "email": "sarah.mitchell@acmecorp.com" }'
+```
+
+#### Full request
+
+```bash
+curl -X POST \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research \
+  -H "Authorization: Bearer cp_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "sarah.mitchell@acmecorp.com",
+    "prospect_name": "Sarah Mitchell",
+    "company_name": "Acme Corp",
+    "linkedin_url": "https://www.linkedin.com/in/sarah-mitchell/",
+    "company_linkedin_url": "https://www.linkedin.com/company/acmecorp/"
+  }'
+```
+
+#### Response — HTTP 202 Accepted
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "processing",
+  "estimated_seconds": 30
+}
+```
+
+| Field               | Description                                         |
+| ------------------- | --------------------------------------------------- |
+| `research_id`       | Unique ID for this job — use it to poll for results |
+| `status`            | Always `processing` on initial response             |
+| `estimated_seconds` | Estimated completion time in seconds                |
+
+#### Error responses
+
+- **401** `missing_api_key` / `invalid_key`
+- **400** `missing_email` / `invalid_email_format`
+- **429** `credits_exhausted` / `trial_limit_reached`
+
+---
+
+### GET /research-status/{research_id}
+
+Poll this endpoint until `status` is `completed` or `failed`. Does **not** consume credits.
+
+**Endpoint:** `GET https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/{research_id}`
+
+**Recommended polling interval:** every 5 seconds | **Max wait:** 3 minutes
+
+```bash
+curl \
+  https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1/research-status/res_1a7b6e9c35a9b848 \
+  -H "Authorization: Bearer cp_live_..."
+```
+
+#### Status values
+
+| Status       | Meaning                                     | Action                        |
+| ------------ | ------------------------------------------- | ----------------------------- |
+| `queued`     | Job is waiting to be picked up by a worker  | Continue polling              |
+| `processing` | Pipeline is running                         | Continue polling              |
+| `completed`  | All enrichment steps finished successfully  | Use the data                  |
+| `failed`     | Pipeline encountered an unrecoverable error | Check `error` field; resubmit |
+
+#### Response — processing
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "processing",
+  "estimated_seconds": 15
+}
+```
+
+#### Response — completed (full example)
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "completed",
+  "completed_at": "2026-05-03T08:27:08.004+00:00",
+  "data": {
+    "prospect": {
+      "id": 42,
+      "name": "Sarah Mitchell",
+      "title": "VP of Sales",
+      "company": "Acme Corp",
+      "email": "sarah.mitchell@acmecorp.com",
+      "linkedin_url": "https://www.linkedin.com/in/sarah-mitchell/",
+      "photo": "https://media.licdn.com/dms/image/...",
+      "last_role_start": "2024-03-01",
+      "summary": "Sarah Mitchell is VP of Sales at Acme Corp, leading a 40-person enterprise sales team. Her LinkedIn activity shows a focus on outbound pipeline efficiency and CRM adoption, suggesting an interest in tools that reduce manual research overhead for her reps.",
+      "opening_talk": [
+        "Your post about reducing sales cycle length through better pre-call prep resonated — that's exactly the problem CallPrep solves for teams like yours.",
+        "You mentioned your reps spend 45 minutes on average researching before each call — we can cut that to under 60 seconds.",
+        "Your comment on LinkedIn ROI for outbound caught my attention — CallPrep pulls live LinkedIn activity into every research brief automatically."
+      ],
+      "posts": [
+        {
+          "text": "We cut our average sales cycle by 18% last quarter...",
+          "posted": "2026-04-21 09:15:00",
+          "post_url": "https://www.linkedin.com/feed/update/urn:li:activity:...",
+          "summary": "Reduced sales cycle 18% by mandating pre-call research briefs before every discovery call."
+        }
+      ]
+    },
+    "company": {
+      "name": "Acme Corp",
+      "description": "Acme Corp is a B2B SaaS platform for enterprise sales teams...",
+      "linkedin_url": "https://www.linkedin.com/company/acmecorp/",
+      "website": "https://acmecorp.com",
+      "industry": "software",
+      "hq": "San Francisco, US",
+      "revenue": "24M",
+      "employees": "180",
+      "technologies": ["Salesforce", "HubSpot", "AWS", "Stripe", "Segment"],
+      "problems": [
+        "Enterprise sales teams waste hours on manual prospect research before each call",
+        "Reps lack competitive intelligence when entering discovery calls with informed buyers",
+        "Sales managers struggle to ensure consistent pre-call preparation across distributed teams",
+        "Outbound sequences lack personalization due to limited time for prospect research"
+      ],
+      "services": [
+        "AI-powered pre-call research briefs generated from LinkedIn, company news, and CRM data",
+        "Competitive intelligence alerts when prospects engage with competitor content",
+        "Sales playbook automation that tailors discovery questions to prospect personas",
+        "CRM-native workflow that surfaces research directly inside Salesforce and HubSpot"
+      ],
+      "icp": [
+        "Enterprise SaaS companies with 50+ person sales teams running high-volume outbound",
+        "RevOps leaders standardizing pre-call processes across distributed sales orgs",
+        "Sales managers at B2B companies with ACV over $20k requiring consultative selling",
+        "SDR teams doing account-based outreach where personalization directly impacts reply rates"
+      ],
+      "synergy_points": [
+        "CallPrep directly eliminates Acme Corp's core pain point — reps spending 45+ minutes on pre-call research — by automating enrichment in under 60 seconds.",
+        "Acme Corp's Salesforce and HubSpot integrations align with CallPrep's CRM-native positioning.",
+        "Acme Corp sells to enterprise sales teams — the exact buyers who understand and budget for sales productivity tools.",
+        "Acme Corp's focus on outbound personalization makes CallPrep's LinkedIn post analysis and opening talk generation directly relevant."
+      ],
+      "discovery_questions": [
+        "You've invested in Salesforce and HubSpot — how are your reps currently pulling pre-call intelligence from those systems before discovery calls, and where does the process break down?",
+        "With 180 people and a distributed team, how do you ensure consistent pre-call preparation standards across your SDR and AE org?",
+        "Your LinkedIn post mentioned cutting sales cycles by 18% through pre-call briefs — what's the biggest bottleneck preventing you from scaling that behavior across the full team?"
+      ],
+      "news": [
+        {
+          "summary": "Acme Corp raised a $12M Series A to expand enterprise integrations and grow its European GTM team.",
+          "url": "https://techcrunch.com/2026/03/acme-corp-series-a",
+          "date": "2026-03"
+        }
+      ],
+      "insights": [
+        "Competitors like Gong and Chorus position on call recording and post-call analytics — Acme Corp's gap is pre-call intelligence, which CallPrep fills directly.",
+        "Market gap: most sales intelligence tools provide contact data but not contextual, AI-generated talking points.",
+        "CallPrep gives Acme Corp reps a measurable edge: personalized opening lines have 3x higher engagement in discovery calls.",
+        "Key concern: Acme Corp may already evaluate competing tools for pre-call features."
+      ]
+    },
+    "decision_makers": [
+      {
+        "full_name": "Sarah Mitchell",
+        "position_title": "VP of Sales",
+        "linkedin_url": "https://www.linkedin.com/in/sarah-mitchell/",
+        "picture_url": "https://media.licdn.com/dms/image/...",
+        "location_text": "San Francisco, CA",
+        "company_name": "Acme Corp"
+      },
+      {
+        "full_name": "James Okafor",
+        "position_title": "Chief Revenue Officer",
+        "linkedin_url": "https://www.linkedin.com/in/james-okafor/",
+        "location_text": "San Francisco, CA",
+        "company_name": "Acme Corp"
+      }
+    ]
+  }
+}
+```
+
+#### Response — failed
+
+```json
+{
+  "research_id": "res_1a7b6e9c35a9b848",
+  "status": "failed",
+  "error": "internal_error"
+}
+```
+
+You can resubmit the same request. If failure was caused by infrastructure error, credit is refunded automatically.
+
+#### Error responses
+
+- **401** `invalid_key`
+- **404** `not_found` — research_id doesn't exist or belongs to a different account
+
+---
+
+### Response fields reference
+
+#### prospect fields
+
+| Field             | Type        | Description                                                              |
+| ----------------- | ----------- | ------------------------------------------------------------------------ |
+| `name`            | string      | Full name                                                                |
+| `title`           | string      | Job title, translated to English                                         |
+| `company`         | string      | Current company name                                                     |
+| `email`           | string      | Work email address                                                       |
+| `linkedin_url`    | string      | LinkedIn profile URL                                                     |
+| `photo`           | string/null | Profile photo URL                                                        |
+| `last_role_start` | string/null | Start date of current role — `YYYY-MM-DD`                                |
+| `summary`         | string      | AI-generated 2-3 sentence professional summary                           |
+| `opening_talk`    | string[]    | 3 conversation starters personalised to the prospect's LinkedIn activity |
+| `posts`           | object[]    | Up to 3 recent LinkedIn posts with AI-generated summaries                |
+
+#### company fields
+
+| Field                 | Type        | Description                                               |
+| --------------------- | ----------- | --------------------------------------------------------- |
+| `name`                | string      | Company name                                              |
+| `description`         | string      | Company description, translated to English                |
+| `linkedin_url`        | string      | LinkedIn company page URL                                 |
+| `website`             | string      | Company website                                           |
+| `industry`            | string      | Industry (e.g. `software`, `marketing & advertising`)     |
+| `hq`                  | string      | Headquarters location                                     |
+| `revenue`             | string/null | Estimated annual revenue                                  |
+| `employees`           | string      | Estimated employee count                                  |
+| `technologies`        | string[]    | Tech stack detected for the company                       |
+| `problems`            | string[]    | 4 problems the company solves for its customers           |
+| `services`            | string[]    | 4 main services or products                               |
+| `icp`                 | string[]    | 4 Ideal Customer Profiles of the company                  |
+| `synergy_points`      | string[]    | 4 synergies between this company and **your product**     |
+| `discovery_questions` | string[]    | 3 discovery questions tailored for this specific prospect |
+| `clients`             | object/null | Estimated client count                                    |
+| `news`                | object[]    | Up to 3 recent company news items (max 12 months old)     |
+| `insights`            | string[]    | 4 competitive insights about the company                  |
+| `posts`               | object[]    | Up to 3 recent LinkedIn company posts with AI summaries   |
+
+#### decision_makers fields
+
+Only available on Growth and Scale plans. On other plans, `decision_makers` is an empty array.
+
+| Field            | Type        | Description          |
+| ---------------- | ----------- | -------------------- |
+| `full_name`      | string      | Full name            |
+| `position_title` | string      | Job title            |
+| `linkedin_url`   | string      | LinkedIn profile URL |
+| `picture_url`    | string/null | Profile photo URL    |
+| `location_text`  | string/null | Location             |
+| `company_name`   | string      | Company they work at |
+
+#### Nullable fields
+
+Fields may be `null` when data is not available. Always handle nulls:
+
+```javascript
+const summary = data.prospect?.summary ?? 'No summary available';
+const dm = data.decision_makers ?? [];
+```
+
+---
+
+### Error codes reference
+
+All errors return a JSON body with an `error` field containing a machine-readable code.
+
+#### HTTP status codes
+
+| Status | Meaning                               |
+| ------ | ------------------------------------- |
+| `202`  | Request accepted (POST /research)     |
+| `200`  | Success (GET /research-status)        |
+| `400`  | Bad request — invalid parameters      |
+| `401`  | Unauthorized — missing or invalid key |
+| `404`  | Not found — research ID doesn't exist |
+| `429`  | Too many requests — credits exhausted |
+| `500`  | Internal server error                 |
+
+#### Authentication errors (401)
+
+| Code              | Description                                           |
+| ----------------- | ----------------------------------------------------- |
+| `missing_api_key` | No `Authorization` header provided                    |
+| `invalid_key`     | Key not found, revoked, or belongs to another account |
+
+#### Request errors (400)
+
+| Code                     | Description                                    |
+| ------------------------ | ---------------------------------------------- |
+| `missing_email`          | `email` field is required                      |
+| `invalid_email_format`   | Email address is not valid                     |
+| `missing_key_id`         | API key ID not found in request                |
+| `api_key_has_no_product` | The key has no product context — regenerate it |
+
+#### Credit errors (429)
+
+| Code                  | Description                      |
+| --------------------- | -------------------------------- |
+| `credits_exhausted`   | Monthly credits are fully used   |
+| `trial_limit_reached` | Free plan 3-credit limit reached |
+
+Response body includes: `{ "error": "credits_exhausted", "used": 50, "limit": 50 }`
+
+#### Not found (404)
+
+| Code        | Description                                                        |
+| ----------- | ------------------------------------------------------------------ |
+| `not_found` | The `research_id` does not exist or belongs to a different account |
+
+#### Research job errors (appear in `error` field when `status` is `failed`)
+
+| Code             | Description                                               |
+| ---------------- | --------------------------------------------------------- |
+| `internal_error` | An unexpected error occurred in the pipeline              |
+| `timeout`        | The job exceeded maximum processing time (auto-retryable) |
+
+---
+
+## 6. Guides
+
+### Caching behavior
+
+CallPrep caches enriched data per `(email, product)` combination. When you submit a research request for a recently enriched email, cached data is returned immediately — no external API calls are made.
+
+Effects of a cache hit:
+
+- Response time drops from ~30s to **<2 seconds**
+- No additional data source costs incurred
+- **1 credit is still consumed**
+
+#### Cache TTLs
+
+| Data type       | Cache TTL     | Notes                                                           |
+| --------------- | ------------- | --------------------------------------------------------------- |
+| Prospect data   | 30 days       | Name, title, LinkedIn URL, employment history                   |
+| Company data    | 90 days       | Industry, description, tech stack, HQ                           |
+| Decision makers | 60 days       | Key people at the company                                       |
+| AI insights     | Same as above | Summary, opening talks, synergy points — regenerated if missing |
+| LinkedIn posts  | Same as above | Re-fetched if not present in cache                              |
+
+#### Granular cache flags
+
+The pipeline tracks three flags separately:
+
+- **`fetch`** — should we call external APIs for new prospect/company data?
+- **`needsAI`** — should we regenerate AI insights?
+- **`needsPosts`** — should we re-fetch LinkedIn posts?
+
+If a previous research run failed at the AI step, the next request regenerates only AI insights — without re-calling Apollo, PDL, or LinkedIn.
+
+#### Cache is per product
+
+Cache is scoped to `(email, user, product)`. Two API keys with different product contexts each maintain their own cache.
+
+#### Forcing a fresh research
+
+There is currently no API-level cache bypass. Contact hello@callprep.app if you need fresh data within the cache window.
+
+#### Identifying cache hits
+
+```json
+{
+  "data": { ... },
+  "_meta": {
+    "prospect": { "from_cache": true, "cache_age_days": 12, "source": "apollo" },
+    "company":  { "from_cache": false, "apis_called": ["apollo"] }
+  }
+}
+```
+
+> The `_meta` field is informational and may change between versions. Do not build business logic that depends on it.
+
+---
+
+### Polling best practices
+
+Poll every **5 seconds** with a maximum timeout of **3 minutes**. Most requests complete in 20–60 seconds.
+
+```javascript
+async function pollResearch(researchId, apiKey, options = {}) {
+  const { intervalMs = 5000, timeoutMs = 180000, onProgress = null } = options;
+  const BASE_URL = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, intervalMs));
+    const res = await fetch(`${BASE_URL}/research-status/${researchId}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    const data = await res.json();
+    onProgress?.(data);
+    if (data.status === 'completed') return data;
+    if (data.status === 'failed')
+      throw new Error(`Research failed: ${data.error}`);
+  }
+  throw new Error('Research timed out after 3 minutes');
+}
+```
+
+#### Always check status immediately after submitting
+
+Cache hits may complete before your first poll:
+
+```javascript
+const initial = await fetch(`${BASE_URL}/research-status/${researchId}`, ...);
+const data    = await initial.json();
+if (data.status === 'completed') return data; // Cache hit
+// Otherwise, start polling
+```
+
+#### Exponential backoff (optional, for high-volume usage)
+
+```javascript
+let delay = 2000; // start at 2s
+while (/* not done */) {
+  await new Promise(r => setTimeout(r, delay));
+  delay = Math.min(delay * 1.5, 10000); // cap at 10s
+}
+```
+
+---
+
+### Handling errors in production
+
+**Error categories:**
+
+- **Client errors (4xx)** — invalid requests; fix the request before retrying
+- **Server errors (5xx)** — infrastructure issues; safe to retry with backoff
+- **Job failures** — `status: failed` in research results; usually safe to resubmit
+
+#### Retry strategy
+
+| Error                  | Retry? | Strategy                           |
+| ---------------------- | ------ | ---------------------------------- |
+| `credits_exhausted`    | ❌     | Wait for next billing cycle        |
+| `invalid_key`          | ❌     | Fix configuration                  |
+| `invalid_email_format` | ❌     | Fix input data                     |
+| `job_failed`           | ✅     | Retry once after 5s                |
+| `5xx` errors           | ✅     | Exponential backoff, max 3 retries |
+| `polling_timeout`      | ✅     | Resubmit with fresh `research_id`  |
+
+#### Production-ready client (JavaScript)
+
+```javascript
+class CallPrepClient {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.baseUrl = 'https://rpiqzfzokrwxavztrpmp.supabase.co/functions/v1';
+  }
+
+  async research(email, options = {}) {
+    const res = await fetch(`${this.baseUrl}/research`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, ...options }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new CallPrepError(data.error, res.status, data);
+    return data;
+  }
+
+  async pollStatus(researchId, { intervalMs = 5000, timeoutMs = 180000 } = {}) {
+    const deadline = Date.now() + timeoutMs;
+    while (Date.now() < deadline) {
+      await sleep(intervalMs);
+      const res = await fetch(`${this.baseUrl}/research-status/${researchId}`, {
+        headers: { Authorization: `Bearer ${this.apiKey}` },
+      });
+      const data = await res.json();
+      if (data.status === 'completed') return data;
+      if (data.status === 'failed')
+        throw new CallPrepError('job_failed', 200, data);
+    }
+    throw new CallPrepError('polling_timeout', 0, { researchId });
+  }
+}
+
+class CallPrepError extends Error {
+  constructor(code, status, body) {
+    super(`CallPrep error: ${code}`);
+    this.code = code;
+    this.status = status;
+    this.body = body;
+  }
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+```
+
+Always log the `research_id` — it's essential for debugging with support:
+
+```javascript
+const { research_id } = await client.research(email);
+logger.info('Research started', { research_id, email });
+```
+
+---
+
+## 7. Plans & Pricing
+
+| Plan    | Price   | Credits/month | Price/credit |
+| ------- | ------- | ------------- | ------------ |
+| Free    | $0      | 3             | —            |
+| Starter | $49/mo  | 50            | $0.98        |
+| Growth  | $149/mo | 200           | $0.75        |
+| Scale   | $349/mo | 600           | $0.58        |
+
+### Feature comparison
+
+| Feature                      | Free | Starter | Growth | Scale     |
+| ---------------------------- | ---- | ------- | ------ | --------- |
+| Credits/month                | 3    | 50      | 200    | 600       |
+| Price per credit             | —    | $0.98   | $0.75  | $0.58     |
+| Prospect enrichment          | ✅   | ✅      | ✅     | ✅        |
+| Company enrichment           | ✅   | ✅      | ✅     | ✅        |
+| AI insights                  | ✅   | ✅      | ✅     | ✅        |
+| LinkedIn posts analysis      | ✅   | ✅      | ✅     | ✅        |
+| Decision makers              | ❌   | ❌      | ✅     | ✅        |
+| Sales pitch generation       | ❌   | ❌      | ❌     | ✅        |
+| Company news                 | ❌   | ❌      | ❌     | ✅        |
+| API keys                     | 1    | 3       | 10     | Unlimited |
+| Early access to new features | ❌   | ❌      | ✅     | ✅        |
+| Email support                | 48h  | 48h     | 24h    | Priority  |
+| Slack / WhatsApp support     | ❌   | ❌      | ✅     | ✅        |
+| Dedicated Slack channel      | ❌   | ❌      | ❌     | ✅        |
+| Onboarding call              | ❌   | ❌      | ❌     | ✅        |
+| Custom integrations          | ❌   | ❌      | ❌     | ✅        |
+| Invoice billing              | ❌   | ❌      | ❌     | ✅        |
+| 99.9% SLA                    | ❌   | ❌      | ❌     | ✅        |
+
+### Upgrading
+
+Upgrade at any time from Dashboard → Billing. Credits are prorated — unused credits from the current plan carry over.
+
+For volumes above 600 credits/month, custom integrations, or enterprise requirements: hello@callprep.app
+
+---
+
+## 8. Data retention & GDPR
+
+### Enriched data storage
+
+Prospect and company data is **stored indefinitely** — not automatically deleted. Data is refreshed (overwritten) when a new research request is submitted after the refresh window has elapsed.
+
+| Data type       | Refresh window | On refresh                                |
+| --------------- | -------------- | ----------------------------------------- |
+| Prospect data   | 30 days        | Previous record overwritten with new data |
+| Company data    | 90 days        | Previous record overwritten with new data |
+| Decision makers | 60 days        | Previous record overwritten with new data |
+
+Within the refresh window, repeated research requests return the existing enriched data — no new enrichment is run.
+
+### Log retention
+
+| Log type      | Retention |
+| ------------- | --------- |
+| Research logs | 12 months |
+| Error logs    | 6 months  |
+
+### GDPR
+
+CallPrep processes personal data as a **data processor**. You — as the company using the API — are the **data controller** responsible for ensuring a lawful basis for processing prospect data.
+
+Key points:
+
+- Data is stored in the EU (Supabase EU West region)
+- Data is scoped to your account — other users never access your data
+- CallPrep does not sell or share enriched data with third parties
+- Deletion requests: forward to hello@callprep.app
+- Account deletion removes all associated enriched data within 30 days
+
+For a Data Processing Agreement (DPA): hello@callprep.app
+
+---
+
+## 9. Integrations
+
+### HubSpot
+
+**Available on:** Growth and Scale plans
+
+The HubSpot integration connects CallPrep to your CRM so your team always has enriched prospect data directly on the HubSpot contact record.
+
+When a contact reaches your configured lead score threshold, CallPrep automatically:
+
+1. Researches the prospect using your product context
+2. Writes AI-generated insights to custom contact properties
+3. Creates a structured note on the contact record
+4. Optionally sends a Slack summary and email digest
+
+#### What gets synced
+
+For each researched contact, CallPrep creates a **property group** in HubSpot named after your product (e.g. _CallPrep: Juicer_) containing:
+
+| Property                | Description                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| **Status**              | Set to `completed` when research is done — prevents re-researching the same contact |
+| **Prospect Summary**    | AI-generated professional summary                                                   |
+| **Opening Talk**        | 3 personalised conversation starters                                                |
+| **Synergy Points**      | How your product maps to this company's needs                                       |
+| **Discovery Questions** | Tailored questions to ask in the call                                               |
+| **Company News**        | Recent news about the company                                                       |
+| **Company Industry**    | Industry classification                                                             |
+| **Company Employees**   | Employee count                                                                      |
+| **Enriched At**         | Timestamp of last enrichment                                                        |
+
+A structured note is also created on the contact with all insights formatted for quick reading.
+
+#### Setup
+
+**Step 1 — Connect HubSpot**
+
+Go to Dashboard → Integrations → click **Connect HubSpot** next to your product. You'll be redirected to HubSpot to authorise access. Required permissions: view/manage contacts, create/manage contact property settings, create notes. CallPrep automatically creates the custom property group and all required fields.
+
+**Step 2 — Configure sync settings**
+
+- **Schedule:** Daily / Twice a week (Mon+Thu) / Weekly (Mon) — at your chosen UTC hour
+- **Lead score filter:** Set the score property (default: `hs_lead_score`) and minimum score (default: 70)
+- **Email filters:** Skip free email providers (Gmail, Yahoo, etc.) and/or role-based mailboxes (info@, contact@, etc.)
+- **Research limit:** 1–50 contacts per sync run (hard cap: 50)
+- **Active / Paused** toggle: takes effect immediately
+
+**Step 3 — Save and enable**
+
+Click **Save settings**, toggle to **Active**. First sync runs at next scheduled time.
+
+#### Slack notifications after sync
+
+1. Go to api.slack.com/apps → Create New App → From scratch
+2. Under Incoming Webhooks, enable and add a new webhook to your workspace
+3. Select the target channel
+4. Copy the webhook URL (`https://hooks.slack.com/services/...`)
+5. Paste into **Webhook URL** field in CallPrep integration settings
+
+You receive: one summary message per sync + one follow-up message per contact.
+
+#### Email summary
+
+After each sync, CallPrep sends an email digest to your account email. Configure a different address under Email Summary in integration settings. Uncheck to disable.
+
+#### Credits
+
+Each researched contact consumes 1 credit. Skipped contacts (filtered out) do not consume credits.
+
+#### Multiple products
+
+Each product can have its own independent HubSpot integration with different settings. All products share the same HubSpot OAuth connection. Each product creates its own property group in HubSpot.
+
+#### Disconnecting
+
+Dashboard → Integrations → **Disconnect**. This removes access and pauses all active integrations. Already-written HubSpot properties and sync settings are **preserved**.
+
+## 10. Support & Contact
+
+| Plan    | Channel                 | Response time |
+| ------- | ----------------------- | ------------- |
+| Free    | Email                   | 48h           |
+| Starter | Email                   | 48h           |
+| Growth  | Email + Slack/WhatsApp  | 24h           |
+| Scale   | Dedicated Slack channel | Priority      |
+
+**Email:** hello@callprep.app
+
+When reporting an issue, include:
+
+- Your `research_id`
+- The email address you were researching
+- The error code or unexpected behaviour
+- Timestamp of the issue
+
+**Status page:** https://status.callprep.app
+
+**Feature requests:** hello@callprep.app with subject `Feature request: ...`
+
+---
+
+## 11. FAQ
+
+**How long does a research request take?**
+Typically 20–60 seconds. Cache hits return in under 2 seconds.
+
+**What happens if a prospect can't be found?**
+The pipeline still attempts to enrich the company via the email domain and generate AI insights from available data. Status will still be `completed`, but some fields like `summary` or `opening_talk` may be `null`.
+
+**Does polling GET /research-status consume credits?**
+No. Only `POST /research` consumes 1 credit. You can poll as many times as needed.
+
+**Can I submit the same email multiple times?**
+Yes. CallPrep caches enriched data per `(email, product)` combination. Subsequent requests return data much faster. A credit is still consumed per request.
+
+**What languages are supported for AI-generated content?**
+English, Polish, German, French, Spanish, Italian, Portuguese, Dutch. Source data is always translated to your preferred language. Set language in account preferences.
+
+**Are decision makers available on all plans?**
+No. Decision makers are available on Growth and Scale plans only. On other plans, `decision_makers` is an empty array.
+
+**What is company_linkedin_url used for?**
+It overrides auto-detection — useful when the prospect's profile doesn't link to the correct company page.
+
+**Is my data shared between users?**
+No. All enriched data is scoped to your account and product. Different users never see each other's data, even for the same email address.
+
+**What should I do if status stays in 'processing' for a long time?**
+If `status` remains `processing` for more than 3 minutes, the job automatically transitions to `failed`. You can then resubmit. If this happens repeatedly, contact hello@callprep.app with the `research_id`.
+
+**Can I get a refund if a research job fails?**
+Yes — credits are refunded automatically when a job fails due to an infrastructure error. For other cases, contact hello@callprep.app with the `research_id`.
+
+**What is the synergy_points field?**
+An AI-generated list of 4 connections between the prospect's company and **your product** — based on the product context tied to your API key. This is unique to CallPrep and personalised per API key.
+
+**How do I update my product context?**
+Dashboard → API Keys → find your key → edit product settings. Changes apply to all future research requests. Existing cached data is not affected.
+
+---
