@@ -85,13 +85,14 @@ Choose how often CallPrep checks for new leads to research:
 
 CallPrep only researches contacts above a certain score threshold.
 
-**Score property** — the HubSpot contact property that holds the lead score. Defaults to `hs_lead_score` (available on paid HubSpot plans). If you use a custom scoring property, enter its internal name here.
+<Warning>
+  HubSpot does not create a lead score property by default. You must first set
+  up **Lead Scoring** in HubSpot (Settings → Lead Scoring & Scoring), which
+  generates a custom score property in your portal. Enter that property's
+  internal name below — without it, the sync cannot run.
+</Warning>
 
-<Tip>
-  To find the internal name of a property, go to HubSpot → Settings →
-  Properties, click the property, and look for the **internal name** field
-  (usually lowercase with underscores).
-</Tip>
+**Score property** — the internal name of the HubSpot contact property that holds the lead score. To find it: go to HubSpot → **Settings → Properties → Contact properties**, search for your scoring property, click on it, and copy the **Internal name** (lowercase with underscores, e.g. `my_lead_score` or `combined_score`).
 
 **Minimum score** — contacts scoring below this value are skipped. Default is `70`.
 
@@ -231,18 +232,19 @@ To remove the integration, click **Disconnect** on the integrations page and con
   property in HubSpot.
 </Accordion>
 
-<Accordion title="I use a custom lead scoring property — how do I find its internal name?">
-  In HubSpot, go to **Settings → Properties → Contact properties**, search for
-  your scoring property, click on it, and look for the **Internal name** field.
-  It's usually lowercase with underscores (e.g. `combined_score_q3_2025`). Enter
-  this name in the **Score property** field in CallPrep settings.
+<Accordion title="How do I find the internal name of my score property?">
+  All HubSpot score properties are custom — there is no universal default. Go to
+  **Settings → Properties → Contact properties**, search for the property you
+  use for scoring, click on it, and look for the **Internal name** field. It's
+  always lowercase with underscores (e.g. `combined_score_q3_2025`). Enter this
+  name in the **Score property** field in CallPrep settings.
 </Accordion>
 
 <Accordion title="The sync ran but no contacts were found — why?">
   The most common reasons:
+  - The score property name is wrong or missing — double-check the **internal name** in HubSpot → Settings → Properties
   - No contacts have a value set for the configured score property
   - All contacts above the threshold have already been researched (`status = completed`)
-  - The score property name doesn't match what's in HubSpot — double-check the internal name
 
 Check the sync history table on the integrations page — the **Fetched** column shows how many contacts were returned by HubSpot before filtering.
 
