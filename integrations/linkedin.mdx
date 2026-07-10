@@ -1,11 +1,11 @@
 ---
-title: Autopilot
+title: LinkedIn Integration
 description: Turn every new HubSpot contact into a personalised LinkedIn connection request — researched, written, and sent from your own account, automatically.
 ---
 
 ## Overview
 
-Autopilot turns inbound interest into outreach without any manual work. When a new contact is created in your connected HubSpot portal, CallPrep automatically:
+The LinkedIn integration turns inbound interest into outreach without any manual work. When a new contact is created in your connected HubSpot portal, CallPrep automatically:
 
 1. Researches the person and their company using your product context
 2. Writes a short, personalised LinkedIn connection note grounded in a real synergy with your product
@@ -15,9 +15,9 @@ Autopilot turns inbound interest into outreach without any manual work. When a n
 You stay in control: every invite can be held for your approval, and hard limits protect your LinkedIn account.
 
 <Note>
-  Autopilot builds on the HubSpot integration, available on the **Growth** and
-  **Scale** plans. You connect HubSpot once and link at least one LinkedIn
-  account.
+  The LinkedIn integration builds on the HubSpot integration, available on the
+  **Growth** and **Scale** plans. You connect HubSpot once and link at least one
+  LinkedIn account.
 </Note>
 
 ---
@@ -54,20 +54,27 @@ You can edit all of these later under **Settings → Outreach**.
 
 ### Step 2 — Connect HubSpot
 
-Autopilot reacts to new contacts in HubSpot. If you haven't already, connect HubSpot from **Dashboard → Integrations** — see the [HubSpot Integration](/integrations/hubspot) guide.
+The integration reacts to new contacts in HubSpot. If you haven't already, connect HubSpot from **Dashboard → Integrations → HubSpot** — see the [HubSpot Integration](/integrations/hubspot) guide.
 
 <Note>
-  Autopilot runs on the single product you integrate with HubSpot. New contacts
-  are researched with that product's context.
+  The LinkedIn integration runs on the single product you integrate with
+  HubSpot. New contacts are researched with that product's context.
 </Note>
 
 ### Step 3 — Connect your LinkedIn account
 
-Go to **Dashboard → Autopilot** and open **LinkedIn seats**. Invites are always sent from your **own** LinkedIn account — never a shared or synthetic one. There are two ways to connect:
+Go to **Dashboard → Integrations → LinkedIn** and open **LinkedIn seats**. Invites are always sent from your **own** LinkedIn account — never a shared or synthetic one. There are two ways to connect:
 
 **Email and password** — click **Connect account** and sign in to LinkedIn. Two-factor authentication (authenticator app, SMS, or one-time code) is fully supported.
 
-**Google / SSO sign-in** — if you sign in to LinkedIn with Google and don't have a LinkedIn password, you can connect using your existing browser session instead — no password required. Follow the in-app steps shown on the Autopilot page.
+**Google / SSO sign-in** — if you sign in to LinkedIn with Google and don't have a LinkedIn password, you can connect using your existing browser session instead — no password required. Follow the in-app steps shown on the LinkedIn integration page.
+
+<Tip>
+  **One-click option:** the CallPrep Chrome extension can connect your LinkedIn
+  account in one click — open the extension and go to **Settings → LinkedIn
+  integration**. It reuses the session you're already signed into, so it works
+  with Google / SSO logins too.
+</Tip>
 
 <Tip>
   Connect more than one LinkedIn account to increase throughput — each account
@@ -76,7 +83,7 @@ Go to **Dashboard → Autopilot** and open **LinkedIn seats**. Invites are alway
 
 ### Step 4 — Choose how invites are sent
 
-Under your product's Autopilot settings:
+Under your product's LinkedIn integration settings:
 
 - **Review mode** — _Review first_ holds every invite for your approval, or _Automatic_ sends within your limits without review.
 - **Note language** — write notes in your own language, or automatically match each prospect's language (detected from their public LinkedIn activity).
@@ -85,7 +92,7 @@ Under your product's Autopilot settings:
 
 ## Safety limits
 
-Autopilot is built to protect your LinkedIn account. These limits are always enforced and cannot be exceeded:
+The integration is built to protect your LinkedIn account. These limits are always enforced and cannot be exceeded:
 
 | Limit                                     | Detail                                                                                                        |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -107,13 +114,13 @@ Autopilot is built to protect your LinkedIn account. These limits are always enf
 
 Every note is personalised and grounded in a real reason the prospect and your product fit — not a template. Notes are kept short to fit LinkedIn's connection-request limit, and open with your acquisition context so the prospect understands why you're reaching out.
 
-If Autopilot can't find a credible angle for someone, it won't guess — that invite is held for you to review or write yourself.
+If the integration can't find a credible angle for someone, it won't guess — that invite is held for you to review or write yourself.
 
 ---
 
 ## Reviewing and sending invites
 
-The **Autopilot** page shows two sections:
+The **LinkedIn integration** page shows two sections:
 
 **Awaiting your approval** — every invite that hasn't been sent yet: ones held for review, ones missing a note (quality gate), and any that need attention. For each you can:
 
@@ -127,13 +134,13 @@ The **Autopilot** page shows two sections:
 
 ## After an invite is accepted
 
-When a prospect accepts your connection request, Autopilot marks it **accepted** and logs a note back on the matching HubSpot contact, so your CRM reflects the outreach automatically.
+When a prospect accepts your connection request, the integration marks it **accepted** and logs a note back on the matching HubSpot contact, so your CRM reflects the outreach automatically.
 
 ---
 
 ## Credits
 
-Each contact Autopilot researches consumes **one credit** from your plan — the same pool as manual API research and the HubSpot integration. Sending or reviewing invites is free. See [Credits](/plans/credits) for monthly limits and reset dates.
+Each contact the integration researches consumes **one credit** from your plan — the same pool as manual API research and the HubSpot integration. Sending or reviewing invites is free. See [Credits](/plans/credits) for monthly limits and reset dates.
 
 ---
 
@@ -151,8 +158,9 @@ Each contact Autopilot researches consumes **one credit** from your plan — the
 
 <Accordion title="I sign in to LinkedIn with Google and don't know my password — can I still connect?">
   Yes. Use the browser-session option when connecting your LinkedIn account — it
-  uses your existing logged-in session, so no LinkedIn password is needed. Follow
-  the in-app steps shown on the Autopilot page.
+  uses your existing logged-in session, so no LinkedIn password is needed. The
+  CallPrep Chrome extension can do this in one click under **Settings → LinkedIn
+  integration**.
 </Accordion>
 
 <Accordion title="Can I increase how many invites go out per day?">
@@ -172,9 +180,9 @@ Each contact Autopilot researches consumes **one credit** from your plan — the
 </Accordion>
 
 <Accordion title="Do I have to write the notes?">
-  No — Autopilot writes them for you, personalised per prospect. You only step in
-  when the quality gate decides there isn't a strong enough angle, or if you want
-  to tweak a note before sending.
+  No — the integration writes them for you, personalised per prospect. You only
+  step in when the quality gate decides there isn't a strong enough angle, or if
+  you want to tweak a note before sending.
 </Accordion>
 
 </AccordionGroup>
@@ -183,4 +191,4 @@ Each contact Autopilot researches consumes **one credit** from your plan — the
 
 ## Need help?
 
-Setting up Autopilot or connecting your LinkedIn account? Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you get running.
+Setting up the LinkedIn integration or connecting your LinkedIn account? Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you get running.
