@@ -1,0 +1,186 @@
+---
+title: Autopilot
+description: Turn every new HubSpot contact into a personalised LinkedIn connection request — researched, written, and sent from your own account, automatically.
+---
+
+## Overview
+
+Autopilot turns inbound interest into outreach without any manual work. When a new contact is created in your connected HubSpot portal, CallPrep automatically:
+
+1. Researches the person and their company using your product context
+2. Writes a short, personalised LinkedIn connection note grounded in a real synergy with your product
+3. Sends the connection request **from your own LinkedIn account**, within safe daily limits
+4. Tracks acceptances and logs a note back on the HubSpot contact
+
+You stay in control: every invite can be held for your approval, and hard limits protect your LinkedIn account.
+
+<Note>
+  Autopilot builds on the HubSpot integration, available on the **Growth** and
+  **Scale** plans. You connect HubSpot once and link at least one LinkedIn
+  account.
+</Note>
+
+---
+
+## How it works
+
+```
+New HubSpot contact
+      ↓
+CallPrep researches the person + company
+      ↓
+Personalised connection note (based on a real synergy)
+      ↓
+Connection request sent from your LinkedIn account
+      ↓
+Acceptance tracked · note logged back to HubSpot
+```
+
+Everything after the contact is created happens automatically. You only ever connect your accounts and review invites.
+
+---
+
+## Setup
+
+### Step 1 — Complete onboarding
+
+The first time you open CallPrep you're asked for a few details that shape your outreach:
+
+- **Sales methodology** — how your team approaches deals
+- **Acquisition context** — how leads typically reach you (e.g. _registered on our website_, _downloaded a guide_). This becomes the opening line of your notes.
+- **Excluded domains** — companies you never want researched or contacted
+
+You can edit all of these later under **Settings → Outreach**.
+
+### Step 2 — Connect HubSpot
+
+Autopilot reacts to new contacts in HubSpot. If you haven't already, connect HubSpot from **Dashboard → Integrations** — see the [HubSpot Integration](/integrations/hubspot) guide.
+
+<Note>
+  Autopilot runs on the single product you integrate with HubSpot. New contacts
+  are researched with that product's context.
+</Note>
+
+### Step 3 — Connect your LinkedIn account
+
+Go to **Dashboard → Autopilot** and open **LinkedIn seats**. Invites are always sent from your **own** LinkedIn account — never a shared or synthetic one. There are two ways to connect:
+
+**Email and password** — click **Connect account** and sign in to LinkedIn. Two-factor authentication (authenticator app, SMS, or one-time code) is fully supported.
+
+**Google / SSO sign-in** — if you sign in to LinkedIn with Google and don't have a LinkedIn password, you can connect using your existing browser session instead — no password required. Follow the in-app steps shown on the Autopilot page.
+
+<Tip>
+  Connect more than one LinkedIn account to increase throughput — each account
+  sends independently, up to its own daily limit.
+</Tip>
+
+### Step 4 — Choose how invites are sent
+
+Under your product's Autopilot settings:
+
+- **Review mode** — _Review first_ holds every invite for your approval, or _Automatic_ sends within your limits without review.
+- **Note language** — write notes in your own language, or automatically match each prospect's language (detected from their public LinkedIn activity).
+
+---
+
+## Safety limits
+
+Autopilot is built to protect your LinkedIn account. These limits are always enforced and cannot be exceeded:
+
+| Limit                                     | Detail                                                                                                        |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **20 invites per day, per LinkedIn account** | A hard ceiling. Add more accounts for more volume.                                                          |
+| **Weekdays only**                         | No invites on Saturday or Sunday.                                                                             |
+| **Working hours**                         | Sent only between **06:00 and 22:00** in each account's timezone.                                            |
+| **One invite per person, ever**           | The same LinkedIn profile is never invited twice.                                                            |
+| **Quality gate**                          | If research finds no credible, personalised angle, no generic note is ever sent — the invite waits for your review instead. |
+
+<Warning>
+  These limits apply to **both** automatic and manual sends. If you try to send
+  past the daily cap or outside the sending window, CallPrep tells you why and
+  holds the invite.
+</Warning>
+
+---
+
+## The connection note
+
+Every note is personalised and grounded in a real reason the prospect and your product fit — not a template. Notes are kept short to fit LinkedIn's connection-request limit, and open with your acquisition context so the prospect understands why you're reaching out.
+
+If Autopilot can't find a credible angle for someone, it won't guess — that invite is held for you to review or write yourself.
+
+---
+
+## Reviewing and sending invites
+
+The **Autopilot** page shows two sections:
+
+**Awaiting your approval** — every invite that hasn't been sent yet: ones held for review, ones missing a note (quality gate), and any that need attention. For each you can:
+
+- **Send** it now (subject to the same daily limit and sending window)
+- **Edit the note** if one is missing or you want to adjust it
+- **Skip** it if it's not a fit
+
+**Invites** — a history of everything sent, with the recipient's LinkedIn profile, the note, status, and date.
+
+---
+
+## After an invite is accepted
+
+When a prospect accepts your connection request, Autopilot marks it **accepted** and logs a note back on the matching HubSpot contact, so your CRM reflects the outreach automatically.
+
+---
+
+## Credits
+
+Each contact Autopilot researches consumes **one credit** from your plan — the same pool as manual API research and the HubSpot integration. Sending or reviewing invites is free. See [Credits](/plans/credits) for monthly limits and reset dates.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Whose LinkedIn account are invites sent from?">
+  Always your own connected account. If several teammates share a HubSpot
+  portal, each new contact is routed to the teammate who owns it in HubSpot, and
+  the invite goes out from that person's connected LinkedIn account. Each
+  teammate connects HubSpot and their own LinkedIn from their own CallPrep
+  account.
+</Accordion>
+
+<Accordion title="I sign in to LinkedIn with Google and don't know my password — can I still connect?">
+  Yes. Use the browser-session option when connecting your LinkedIn account — it
+  uses your existing logged-in session, so no LinkedIn password is needed. Follow
+  the in-app steps shown on the Autopilot page.
+</Accordion>
+
+<Accordion title="Can I increase how many invites go out per day?">
+  The 20-per-day limit is per LinkedIn account and can't be raised — it keeps
+  your account safe. To send more, connect additional LinkedIn accounts; each one
+  adds its own 20-per-day allowance.
+</Accordion>
+
+<Accordion title="Will the same person ever be invited twice?">
+  No. Each LinkedIn profile is invited at most once, ever — even across separate
+  contacts or re-imports.
+</Accordion>
+
+<Accordion title="What if I want to check every invite before it sends?">
+  Set your review mode to **Review first**. Every invite then waits under
+  _Awaiting your approval_ until you send or skip it.
+</Accordion>
+
+<Accordion title="Do I have to write the notes?">
+  No — Autopilot writes them for you, personalised per prospect. You only step in
+  when the quality gate decides there isn't a strong enough angle, or if you want
+  to tweak a note before sending.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Need help?
+
+Setting up Autopilot or connecting your LinkedIn account? Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you get running.
