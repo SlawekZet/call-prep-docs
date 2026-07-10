@@ -96,7 +96,7 @@
         "groups": [
           {
             "group": "Integrations",
-            "pages": ["integrations/hubspot", "integrations/autopilot"]
+            "pages": ["integrations/hubspot", "integrations/linkedin"]
           }
         ]
       }
