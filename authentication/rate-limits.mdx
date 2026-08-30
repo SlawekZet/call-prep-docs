@@ -6,14 +6,16 @@ description: Understanding credit consumption and request limits.
 ## Credits
 
 Each call to `POST /research` consumes **1 credit** from your monthly plan.
-Credits reset at the start of your billing cycle.
+Credits reset at the start of your billing cycle, and are shared with the Chrome
+extension and the Autopilot — one pool for the whole account.
 
-| Plan    | Credits/month | Price/credit |
-| ------- | ------------- | ------------ |
-| Free    | 3             | —            |
-| Starter | 50            | $0.98        |
-| Growth  | 200           | $0.75        |
-| Scale   | 600           | $0.58        |
+| Plan       | Credits/month |
+| ---------- | ------------- |
+| Free       | 10            |
+| Individual | 125           |
+| BDR        | 300           |
+| BDR+       | 800           |
+| Enterprise | Custom        |
 
 <Note>
   `GET /research-status` does **not** consume credits — poll as many times as
@@ -40,8 +42,8 @@ until the next billing cycle or until you upgrade your plan.
 ```json
 {
   "error": "credits_exhausted",
-  "used": 50,
-  "limit": 50
+  "used": 300,
+  "limit": 300
 }
 ```
 

@@ -21,7 +21,7 @@ This means:
 | --------------- | ------------- | --------------------------------------------------------------- |
 | Prospect data   | 30 days       | Name, title, LinkedIn URL, employment history                   |
 | Company data    | 90 days       | Industry, description, tech stack, HQ                           |
-| Decision makers | 60 days       | Key people at the company                                       |
+| Decision makers | 180 days      | Key people at the company                                       |
 | AI insights     | Same as above | Summary, opening talks, synergy points — regenerated if missing |
 | LinkedIn posts  | Same as above | Re-fetched if not present in cache                              |
 
@@ -55,28 +55,8 @@ contact [hello@callprep.app](mailto:hello@callprep.app).
   less frequently than that.
 </Tip>
 
-## Identifying cache hits in the response
+## Cache and retention are different clocks
 
-The `_meta` object in the response indicates whether data came from cache:
-
-```json
-{
-  "data": { ... },
-  "_meta": {
-    "prospect": {
-      "from_cache": true,
-      "cache_age_days": 12,
-      "source": "apollo"
-    },
-    "company": {
-      "from_cache": false,
-      "apis_called": ["apollo"]
-    }
-  }
-}
-```
-
-<Note>
-  The `_meta` field is informational and may change between versions. Don't
-  build business logic that depends on it.
-</Note>
+A cache TTL is how long data is reused instead of looked up again. Retention is
+how long it is kept at all — 365 days for prospect and company records, then
+deleted. See [Data retention](/plans/data-retention).

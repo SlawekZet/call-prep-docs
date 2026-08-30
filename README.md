@@ -22,7 +22,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Structure
 
 ```
-├── mint.json                    # Mintlify configuration
+├── docs.json                    # Mintlify configuration and navigation
 ├── openapi.yaml                 # OpenAPI 3.1 spec (auto-generates API reference)
 ├── introduction/
 │   ├── overview.mdx
@@ -46,7 +46,7 @@ The docs are available at [docs.callprep.app](https://docs.callprep.app).
 ## Adding a new page
 
 1. Create a `.mdx` file in the appropriate directory
-2. Add the path to `mint.json` under `navigation`
+2. Add the path to `docs.json` under `navigation`
 3. Push to `main`
 
 ## Updating the API reference

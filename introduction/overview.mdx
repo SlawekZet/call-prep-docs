@@ -1,59 +1,75 @@
 ---
 title: Overview
-description: Research your prospects before every sales call with a single API call.
+description: Research every prospect before you talk to them — and let the Autopilot do the outreach that gets you the conversation.
 ---
 
 # What is CallPrep?
 
-CallPrep is an **async enrichment API** that researches a prospect before a sales call.
-You provide an email address — we return enriched data about the person and their company,
-including LinkedIn activity, AI-generated insights, synergy points with your product,
-and key decision makers.
+CallPrep does two things, and you can use either one on its own:
+
+- **Research** — give it a prospect's email address and it returns who they are,
+  what their company does, where your product fits, and what to open with. In the
+  dashboard, in a Chrome side panel, or through the API.
+- **Outreach** — the **Autopilot** takes new contacts from your CRM, researches
+  them, and runs a personalised sequence across LinkedIn, email, WhatsApp and
+  Telegram from your own accounts, stopping the moment someone answers.
 
 <CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/introduction/quickstart">
-    Make your first API call in under 5 minutes
+  <Card title="Set up the Autopilot" icon="wand-magic-sparkles" href="/autopilot/overview">
+    New CRM contact in, researched outreach out.
   </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/post-research">
-    Full endpoint documentation with examples
+  <Card title="Chrome extension" icon="chrome" href="/extension/overview">
+    Your meetings, researched before you get to them.
   </Card>
-  <Card title="How it works" icon="gears" href="/introduction/how-it-works">
-    Understand the enrichment pipeline
+  <Card title="API quickstart" icon="rocket" href="/introduction/quickstart">
+    Your first research request in under 5 minutes.
   </Card>
-  <Card title="Get API Key" icon="key" href="https://call-prep-api.vercel.app/api-keys">
-    Generate your key in the dashboard
+  <Card title="Integrations" icon="plug" href="/integrations/overview">
+    HubSpot, LinkedIn, email, WhatsApp, Telegram.
   </Card>
 </CardGroup>
 
-## What you get
+## What a research gives you
 
-For every prospect email you submit, CallPrep returns:
+**About the person**
 
-**Prospect data**
-- Job title (translated to English), company, LinkedIn URL, photo
-- AI-generated professional summary
-- 3 personalised conversation starters based on LinkedIn activity
-- Up to 3 recent LinkedIn posts with AI summaries
+- Job title, company, LinkedIn profile, photo
+- An AI summary of who they are professionally
+- Three conversation openers drawn from their recent LinkedIn activity
+- Their recent posts, summarised — and marked when a post is a reshare rather
+  than their own words
 
-**Company data**
-- Industry, HQ, revenue, employee count, tech stack
-- 4 problems the company solves for customers
-- 4 synergy points with **your product** (personalised per API key)
-- 3 tailored discovery questions to ask in the call
-- Competitive insights and recent company news
+**About the company**
 
-**Decision makers** *(Growth plan and above)*
-- Key people at the company (VPs, Directors, C-level)
-- Name, title, LinkedIn profile, location
+- Industry, HQ, size, revenue signals, tech stack
+- What they sell and who they sell to
+- Synergy points with **your** product, not generic advice
+- Discovery questions tailored to the call
+- Competitive notes and recent company news *(BDR+)*
 
-## How it's different
+**Decision makers** *(BDR and above)*
 
-Unlike static databases, CallPrep:
+- Other senior people at that company — name, title, LinkedIn, location
 
-- **Personalises insights to your product** — each API key is tied to your product's name, description, and target customers
-- **Combines multiple data sources** — Apollo, PDL, LinkedIn, and Claude AI
-- **Caches intelligently** — repeated lookups return instantly at no extra credit cost
-- **Translates automatically** — AI output in your preferred language
+## Why it is different
+
+- **Everything is written against your product.** Your product description, key
+  features and target customers are the context for every insight — so "synergy
+  points" means points between *their* company and *your* product.
+- **It does not guess.** Where the research turns up nothing credible, the
+  Autopilot skips that message rather than sending a generic one, and tells you
+  why on the lead's timeline.
+- **The outreach sends from your accounts** — your LinkedIn profile, your mailbox,
+  your number — inside limits that protect them.
+- **Results are cached**, so researching the same person again is instant.
+
+## Where to start
+
+| You want to | Start here |
+| --- | --- |
+| Automate outreach from your CRM | [Autopilot overview](/autopilot/overview) |
+| Prepare for meetings already in your calendar | [Chrome extension](/extension/overview) |
+| Enrich prospects from your own code | [Quickstart](/introduction/quickstart) |
 
 ## Base URL
 

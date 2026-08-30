@@ -186,3 +186,87 @@ marker with:
 - **`autopilot-capacity.png`** — the email capacity bar with the organic vs
   imported split visible, for the "First emails come first" section of the Email
   page.
+
+---
+
+## Autopilot — `autopilot/*.mdx`
+
+### ap-1 · The builder, open on a new Autopilot
+- **File:** `autopilot-builder.png`
+- **Where:** Dashboard → Autopilot → **Build from scratch**
+- **State:** name filled in (`Agencies — Poland`), one filter rule set, Email and
+  LinkedIn on, two or three touches in the sequence — a builder that looks used,
+  not blank
+- **Must show:** the four cards in order (Name · Who should it contact? · Where can
+  it reach out? · the sequence), and the save bar at the bottom of the frame
+- **Crop:** the form column only, no sidebar
+
+### ap-2 · Show example
+- **File:** `autopilot-show-example.png`
+- **Where:** the same builder → **Show example** on the first email touch
+- **Must show:** the rendered email — greeting, body, and the signature block
+  underneath — next to (or under) the angle that produced it
+- **Why it matters:** this is the shot that sells the product. Use a lead whose
+  research is genuinely good, so the example reads like something a person wrote
+- **Redact:** the example lead's name and company → demo values
+
+### ap-3 · A lead's timeline in Activity
+- **File:** `autopilot-activity-lead.png`
+- **Where:** Dashboard → Autopilot → **Activity** → expand one lead
+- **State:** a lead with a **mixed** history — at least one sent message, one
+  skipped touch **with a visible reason**, and one still scheduled
+- **Must show:** the reason text on the skipped touch (this is the whole point of
+  the shot), and the sent message body
+- **Redact:** lead name, email, company → demo values
+
+### ap-4 · The queue
+- **File:** `autopilot-queue.png`
+- **Where:** Dashboard → Autopilot → the **Queue — N waiting** row
+- **Must show:** both tabs (Waiting / Abandoned) and the per-lead countdown
+- *(Same shot as hs-3 above — take it once and reference it from both pages.)*
+
+### ap-5 · Autopilot settings
+- **File:** `autopilot-settings.png`
+- **Where:** Dashboard → Autopilot → the gear icon
+- **Must show:** all three blocks in one frame — Queue wait time with an option
+  selected, the lateness options with **Off** selected, and both *Addresses to
+  skip* checkboxes
+
+### ap-6 · A template, expanded
+- **File:** `autopilot-template.png`
+- **Where:** Dashboard → Autopilot → **📚 Templates** → expand one
+- **Must show:** the sequence timeline across the top, a few steps with their
+  angles beneath it, and the **Use this template** button
+
+### ap-7 · Analytics
+- **File:** `autopilot-analytics.png`
+- **Where:** Dashboard → Autopilot → **📈 Analytics**
+- **State:** an account with at least a few weeks of history and a non-zero
+  responded rate — zeros teach nothing
+- **Must show:** the outcome tiles, the responded rate, and the weekly chart with
+  bars and the rate line
+
+---
+
+## Chrome extension — `extension/*.mdx`
+
+### ext-1 · The side panel
+- **File:** `extension-panel.png`
+- **Where:** the extension open beside a normal page (a LinkedIn profile or a CRM
+  record — something that makes the context obvious)
+- **State:** signed in, a couple of upcoming meetings listed, at least one already
+  researched
+- **Must show:** the panel in place next to the page, so the reader understands it
+  sits beside their work rather than replacing it
+- **Redact:** meeting titles and attendee names → demo values. **Check the host
+  page for customer data too** — this is the one shot where the background is part
+  of the image
+
+### ext-2 · Meetings with automatic research on
+- **File:** `extension-meetings.png`
+- **Where:** the extension's meeting list, or Settings → auto research
+- **Must show:** either the meeting cards with research attached, or the
+  auto-research toggle **on** with the line about one credit per research
+- **Optional companion** `extension-battlecard.png`: the battlecard email itself,
+  opened on a phone or in a mail client. Worth more than either of the above —
+  it is the thing people actually keep

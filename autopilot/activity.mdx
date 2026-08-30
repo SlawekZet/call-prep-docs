@@ -1,0 +1,190 @@
+---
+title: Activity and troubleshooting
+description: Where to look when a message did not go out, where a lead you expected went, and how to end one lead's sequence by hand.
+---
+
+Four places answer almost every question about an Autopilot. In order:
+
+1. **The row** on the Autopilot list — counters and the delivery chip
+2. **Activity** — one lead's timeline, with the reason for every skip
+3. **The queue** — leads that have not matched anything yet
+4. **Upcoming sends** and the capacity bars — what is scheduled and what is behind
+
+---
+
+## The row
+
+Each Autopilot shows **leads · active · responded · closed** and a **responded
+rate**.
+
+The **delivery chip** appears only when leads are sitting **uncontacted** — it
+stays quiet when everything is moving, so when it does speak it is worth reading.
+Expanding it shows how many leads are waiting for a first message, and how many of
+this Autopilot's leads are reachable per channel.
+
+<Tip>
+  Low reach on a channel is a configuration answer, not a fault: prospected lists
+  rarely have phone numbers or Telegram handles, inbound sign-ups usually do.
+</Tip>
+
+---
+
+## Activity — one lead at a time
+
+**Activity** on an Autopilot opens the lead list. Filter by outcome — *active*,
+*responded*, *closed*, *failed* — or search by name, email or company.
+
+Expanding a lead shows its timeline: every touch, in order, with the channel, the
+step, when it was scheduled, when it was sent, **the message that actually went
+out**, and — where something did not happen — the reason.
+
+{/* SCREENSHOT ap-3 — spec in SCREENSHOTS.md */}
+
+### Why a message was skipped
+
+Nothing is skipped silently. These are the reasons you will actually see:
+
+| Reason on the timeline | What it means | What to do |
+| --- | --- | --- |
+| **No phone number on the contact** | No number in any of the properties you listed | Add the number in HubSpot, or accept that this lead is email/LinkedIn only |
+| **No Telegram @username on the contact** | Telegram cannot open a chat from a number | See [Telegram](/integrations/telegram) |
+| **No LinkedIn profile on this lead** | Enrichment found no profile, or the URL was unusable | Nothing — the other channels carry on |
+| **Already a connection — no invite needed** | You are already connected | Nothing. Message steps behind it still run |
+| **LinkedIn didn't return that profile** | The profile could not be reached at send time | Usually transient; check the profile still exists |
+| **LinkedIn invite was never accepted** | A message step waited a week past its date | Nothing — the sequence moves on |
+| **Lead never warmed up** | A WhatsApp or Telegram step waited three weeks for a reply or an accepted invite | Expected on warm-only channels. Pair them with email or LinkedIn |
+| **Couldn't write a credible note / message** | The research produced nothing true to build on for that channel | Nothing to fix per lead. A generic message is the thing we refuse to send |
+| **Nothing to follow up with** | A follow-up email with no angle to build on — the first email still went | As above |
+| **The address stopped accepting mail** | A hard bounce ended the email steps for this lead | Other channels continue |
+
+### What is *not* a skip
+
+A message held back by the daily limit, the sending window, or a weekend is
+**rescheduled**, not skipped — it moves to the next available slot and keeps its
+place. If your queue is deep, "not sent yet" is far more common than "not sending".
+
+### Why a sequence ended
+
+The lead row carries the reason: *Lead replied*, *Connected on a call*, *Meeting
+booked*, *LinkedIn invite accepted*, *CRM property changed*, *Lead unsubscribed*,
+*Closed manually*, *No reachable channel*, *Fell too far behind its schedule*,
+*Domain is on the excluded list*, *Its Autopilot was archived*.
+
+The first four are wins — see [What stops a sequence](/autopilot/stop-conditions).
+
+---
+
+## The queue — leads that matched nothing yet
+
+At the bottom of the Autopilot list: **Queue — N waiting**.
+
+- **Waiting** — the lead was created but matched no filter yet, and is re-checked
+  as its CRM data arrives. Each row shows roughly how long it has left.
+- **Abandoned** — the wait time ran out and nothing matched. **No research was
+  run and no credit was spent.**
+
+Abandoned is the normal end for leads you never intended to contact. If leads you
+*did* intend to contact land there, the filter is the thing to look at — compare
+it against the property values those contacts actually have.
+
+Depending on your account, abandoned leads can be **reprocessed** (run through the
+filters again as they are now) or **sent to a specific Autopilot** by hand. Both
+research the lead and spend a credit at that point.
+
+{/* SCREENSHOT ap-4 — spec in SCREENSHOTS.md */}
+
+---
+
+## Capacity and upcoming sends
+
+The capacity bars show what today's limits allow across your LinkedIn seats and
+mailboxes, and how much is already used. Under them, the queue depth: how much is
+waiting behind the cap, and roughly how long it will take to clear at the current
+limits.
+
+**Upcoming sends** lists everything scheduled, nearest first, grouped by day and
+filterable by channel — in the order the sender will actually work through it:
+first messages before follow-ups.
+
+<Note>
+  Dates in that list are **intentions, not promises**. Anything that does not fit
+  a day's limit moves forward. If the queue is weeks deep, the fix is a higher
+  daily limit, another mailbox or seat, or fewer leads — not waiting.
+</Note>
+
+---
+
+## Finding one lead
+
+The search box above the Autopilot list answers two questions at once: it filters
+Autopilots by name, and it finds a **lead** by email, first or last name, or
+company — telling you **which Autopilot** they are in, including archived ones.
+Clicking a result opens that Autopilot's Activity with the lead's address already
+filled in.
+
+---
+
+## Closing a lead by hand
+
+Under a lead's timeline in Activity: **close** ends that lead's sequence on every
+channel and cancels everything still queued for them.
+
+- It cannot be undone — the lead comes back the way it arrived, through your CRM.
+- It does **not** retract a win: a lead who already replied stays counted as
+  responded.
+- It changes nothing else about the Autopilot; every other lead carries on.
+
+---
+
+## Nothing is sending at all
+
+Work down this list:
+
+1. **Is the Autopilot switched on?** The list shows it plainly.
+2. **Is a channel connected**, verified, and not paused? A paused mailbox or seat
+   sends nothing.
+3. **Email only:** is the sender identity complete? Incomplete identity holds
+   every email step and shows an "Emails are on hold" banner.
+4. **Are leads arriving at all?** If the queue is empty and no leads are enrolled,
+   the problem is upstream — see
+   [HubSpot troubleshooting](/integrations/hubspot#troubleshooting).
+5. **Are leads enrolled but nothing scheduled?** Check the delivery chip on the row
+   for the reachability of each channel.
+6. **Is everything simply queued?** Open Upcoming sends and the capacity bars.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="A lead is 'active' but nothing has been sent for days.">
+  Either its next touch is genuinely days away, or its messages are behind the
+  daily limit. Expand the lead: a scheduled date in the future is the first case,
+  a date in the past that keeps moving is the second.
+</Accordion>
+
+<Accordion title="Every WhatsApp step on this Autopilot was skipped.">
+  Check the delivery chip on the row: if very few of its leads have a phone number
+  in your CRM, that channel cannot work for this audience, and the fix is in
+  HubSpot rather than in the Autopilot.
+</Accordion>
+
+<Accordion title="Can I see the exact message that was sent?">
+  Yes — expand the lead in Activity. Each sent touch carries the real body, not a
+  reconstruction. If it was shortened to fit a channel limit, the timeline says so.
+</Accordion>
+
+<Accordion title="A lead shows 'No reachable channel'.">
+  The lead matched the Autopilot but has no address on any channel it uses — for
+  example a LinkedIn-only Autopilot and a lead with no LinkedIn profile. The
+  sequence is closed immediately rather than left pending forever.
+</Accordion>
+
+<Accordion title="What does 'Fell too far behind its schedule' mean?">
+  A message drifted further past its planned date than the limit you set under
+  Autopilot settings, so it was dropped instead of arriving badly out of context.
+  That limit is off by default — see [Settings](/autopilot/settings).
+</Accordion>
+
+</AccordionGroup>

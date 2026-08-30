@@ -5,8 +5,26 @@ description: How credits work and when they reset.
 
 ## What is a credit?
 
-One credit = one call to `POST /research`. Credits are consumed when you submit a new
-research request, regardless of whether the result comes from cache or live API calls.
+One credit = **one researched prospect**. It costs the same wherever the research
+was started from, and it is one pool for the whole account:
+
+| Started by | Costs |
+| --- | --- |
+| `POST /research` (API) | 1 credit |
+| A research in the Chrome extension | 1 credit |
+| An automatic research from a calendar meeting | 1 credit per meeting — one attendee, not the whole room |
+| A lead matching an Autopilot filter | 1 credit |
+
+A credit is consumed whether the result comes from cache or from live lookups.
+
+## What is free
+
+- A lead that matched no Autopilot and was **abandoned** — no research, no credit
+- A lead skipped by *Addresses to skip* or *Excluded domains*
+- A contact re-created or re-fired by HubSpot, while **Research each contact only
+  once** is on (the default)
+- Sending, retrying, skipping or rescheduling any outreach message
+- Polling `GET /research-status`
 
 ## Credit reset
 

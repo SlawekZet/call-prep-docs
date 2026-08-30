@@ -1,0 +1,151 @@
+---
+title: What stops a sequence
+description: Every signal that ends an Autopilot sequence, the ones that deliberately do not, and the two gaps worth knowing about before they surprise you.
+---
+
+A sequence should end the moment a human takes over. This page is the complete
+list of what ends it — and, just as importantly, what does not.
+
+<Note>
+  Every condition below except unsubscribe, bounce and manual close is a
+  **toggle** on the Autopilot, under **When should it stop?**. What is checked is
+  what you switched on.
+</Note>
+
+---
+
+## What stops it
+
+| Signal | Detail |
+| --- | --- |
+| **They reply, on any channel** | An answer on email, LinkedIn, WhatsApp or Telegram stops **every** channel, not just the one they answered on. Counted as a win. |
+| **You log a connected call** | A call on the HubSpot contact with a *Connected* outcome, logged after the lead entered the sequence. |
+| **They book a meeting** | A meeting logged on the HubSpot contact after the lead entered the sequence. |
+| **A CRM property changes** | The property and value you nominated — for example *Lifecycle stage is opportunity*. Empty value means any change. |
+| **A LinkedIn invite is accepted** | Only if you switched this on. It then counts as a win. |
+| **They unsubscribe** | Always, on every channel, permanently. Not a toggle. |
+| **You close the lead by hand** | From the lead's timeline in [Activity](/autopilot/activity#closing-a-lead-by-hand). |
+| **A hard bounce** | Stops the **email** steps for that lead only — the address failed, not the person. Other channels continue. |
+
+### When the check happens
+
+Twice, on purpose:
+
+- **Right before every message goes out** — so an answer that arrived overnight is
+  seen before the next send, not after it
+- **Between messages**, on a regular sweep — so the panel reflects reality even
+  while nothing is being sent
+
+---
+
+## What does not stop it
+
+This is the part people do not expect.
+
+### Out-of-office and automatic replies
+
+An auto-reply is not an answer, and treating it as one would silently end
+sequences every time someone goes on holiday. Out-of-office messages, delivery
+receipts and system acknowledgements are recognised and ignored — the sequence
+carries on.
+
+### A call or meeting from before the lead entered the sequence
+
+Only activity logged **after** enrolment counts. A lead who spoke to you six months
+ago and has now come back through your CRM gets a fresh sequence — that is the
+intent, not an oversight.
+
+### Activity logged only on a deal
+
+<Warning>
+  If you log a call or a meeting on a **deal** and it is not associated with the
+  contact — HubSpot shows *0 contacts* on the activity — **CallPrep cannot see it
+  and the sequence keeps running.**
+
+  **What to do:** log activity on the contact, or associate the contact with the
+  activity on the deal. It takes one click in HubSpot and is worth making a team
+  habit.
+</Warning>
+
+This is a known limitation, not a bug being fixed in the background. Without this
+paragraph the symptom is "the Autopilot wrote to someone I had already spoken to"
+with no visible cause.
+
+### A reply to a message someone sent outside the sequence
+
+If a colleague emails a lead from their own mailbox and the lead replies to
+**that** message, the answer may be invisible to CallPrep — it never saw the
+original thread.
+
+**What to do:** reply inside the sequence's thread where you can, or close the
+lead by hand in Activity. If the email is logged on the HubSpot contact, that also
+stops it.
+
+### An email reply to a custom-domain sender
+
+<Warning>
+  A mailbox connected as a **custom domain** is send-only: replies land in your
+  inbox and CallPrep has no access to it, so *stop on reply* cannot fire from
+  email for those leads.
+</Warning>
+
+Gmail and Outlook mailboxes do not have this problem — see
+[Email](/integrations/email#replies-and-bounces). For a custom domain, log the
+reply on the HubSpot contact or close the lead by hand.
+
+---
+
+## What counts as a win
+
+Four outcomes are wins, and they are what the responded rate in
+[Analytics](/autopilot/analytics) is built from:
+
+- **Lead replied** — on any channel
+- **Connected on a call**
+- **Meeting booked**
+- **LinkedIn invite accepted** — *only* on Autopilots where you switched that
+  condition on
+
+Everything else that ends a sequence — completed, unsubscribed, CRM property,
+closed by hand, no reachable channel — is closed, not won.
+
+<Note>
+  A lead that replied **keeps** its win even if the sequence is later closed by
+  hand or the Autopilot is archived. A win, once recorded, is never taken back.
+</Note>
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="A lead replied and still got another message. How?">
+  Almost always one of three things: the reply came to a mailbox CallPrep cannot
+  read (custom domain), the reply was to a message sent outside the sequence, or
+  the activity was logged only on a deal. All three are above, with what to do
+  about each.
+</Accordion>
+
+<Accordion title="Does an auto-reply count as a reply in my stats?">
+  No. It neither stops the sequence nor counts as a response, so your responded
+  rate is not inflated by holiday responders.
+</Accordion>
+
+<Accordion title="I want the sequence to end as soon as someone connects on LinkedIn.">
+  Switch on **LinkedIn invite accepted (you're connected)**. Bear in mind that any
+  LinkedIn messages you scheduled after the request will then never send — which is
+  correct if connecting was the point, and a mistake if you meant to follow up.
+</Accordion>
+
+<Accordion title="Can I restart a lead whose sequence ended?">
+  Not from the panel. A lead comes back the way it arrived: through your CRM. That
+  is deliberate — an "undo" would re-send a schedule you already decided against.
+</Accordion>
+
+<Accordion title="Does unsubscribing block the person forever?">
+  Yes. An unsubscribe stops every active sequence for that person, on every
+  channel, and is never cleared — not by a re-import, not by a new Autopilot.
+</Accordion>
+
+</AccordionGroup>

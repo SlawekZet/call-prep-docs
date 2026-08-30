@@ -20,13 +20,16 @@ Your key will be shown **once**. Copy it immediately and store it securely.
 
 ## Product context
 
-Each API key is tied to a **product context** — the name, description, key features,
-and target customers of your product. This context is sent to an AI agent for every research request,
-so all generated insights (synergy points, discovery questions, opening talks)
-are personalised to your specific product.
+Every research is generated against **your product** — its name, description, key
+features and target customers — so the insights are about what you actually sell.
 
-You can have multiple keys with different product contexts — useful if you sell
-multiple products or to different market segments.
+Your account has **one product**, shared by every key and by the Chrome extension
+and the Autopilot. Edit it under **Settings → Product** in the dashboard.
+
+<Note>
+  Older accounts may still have more than one product from before this changed.
+  Only the current one is used for new research.
+</Note>
 
 ## Key format
 
@@ -47,12 +50,13 @@ curl -H "Authorization: Bearer cp_live_..." \
 
 ## Key limits by plan
 
-| Plan    | API keys  |
-| ------- | --------- |
-| Free    | 1         |
-| Starter | 3         |
-| Growth  | 10        |
-| Scale   | Unlimited |
+| Plan       | API keys |
+| ---------- | -------- |
+| Free       | 1        |
+| Individual | 1        |
+| BDR        | 3        |
+| BDR+       | 10       |
+| Enterprise | Custom   |
 
 ## Security best practices
 

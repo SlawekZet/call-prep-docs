@@ -1,0 +1,116 @@
+---
+title: Autopilot settings
+description: The three account-wide settings behind every Autopilot — how long a lead waits for a match, when a late message is dropped, and which addresses are skipped outright.
+---
+
+**Dashboard → Autopilot → the gear icon.** These apply to every Autopilot on the
+account, not to one of them.
+
+{/* SCREENSHOT ap-5 — spec in SCREENSHOTS.md */}
+
+---
+
+## Queue wait time
+
+**2, 6, 12, 24 or 48 hours. Default: 6.**
+
+Contacts are often created *before* the data that qualifies them — someone signs
+up, the contact appears, and the onboarding answers your filter needs arrive
+minutes or hours later.
+
+So a contact that matches nothing yet waits in the queue and is re-checked as its
+CRM data arrives: every minute for the first quarter of an hour, then less often,
+until this window runs out. Then it is **abandoned** — never researched, no credit
+spent.
+
+| Set it shorter if | Set it longer if |
+| --- | --- |
+| Your filter uses properties that are set at creation time, and waiting only delays the obvious | Your filter uses onboarding answers, enrichment fields, or anything a human fills in later |
+
+<Note>
+  If you have a **fallback Autopilot**, it gets the last look at the lead at the
+  end of this window, and takes it if its own filter matches.
+</Note>
+
+---
+
+## Drop messages that fall too far behind
+
+**Off, 7, 14, 30 or 60 days. Default: off.**
+
+When there is more to send than the daily limits allow, messages move forward
+rather than being dropped. Usually that is right. But a follow-up written for
+"three days after the intro" landing five weeks later is worse than not landing:
+it reads as though nobody was paying attention.
+
+This is **lateness, not age** — how far past its planned date a message is. Fourteen
+days behind plan means the same thing in a two-week sequence and a two-month one.
+
+Leads dropped this way end with *Fell too far behind its schedule* in
+[Activity](/autopilot/activity).
+
+<Tip>
+  Turning this on is a symptom fix. If messages routinely fall weeks behind, the
+  real answer is a higher daily limit, another mailbox or seat, or fewer leads
+  entering at once — check the capacity bars.
+</Tip>
+
+---
+
+## Addresses to skip
+
+**Both off by default.** Each one narrows who your Autopilots contact, and
+narrowing is a choice — so neither is on unless you say so.
+
+| Setting | Skips |
+| --- | --- |
+| **Skip role-based addresses** | Mailboxes named after a function, not a person: `info@`, `contact@`, `kontakt@`, `office@`, `sales@`, `support@` and similar |
+| **Skip free mailbox providers** | Personal mailbox domains: Gmail, Outlook, Yahoo, iCloud, Proton, wp.pl and similar |
+
+Both are checked **before anything else**, so a skipped lead costs no research and
+no credit, and appears with its reason in the HubSpot intake log.
+
+<Warning>
+  Free-provider skipping is blunter than it looks: a founder on Gmail is still a
+  founder. Only switch it on if your product genuinely does not sell to people at
+  a personal address.
+</Warning>
+
+Turning either setting on does not touch leads already enrolled, and turning one
+off does not go back for leads it skipped earlier — those come back the way any
+lead does, through your CRM.
+
+---
+
+## Related settings elsewhere
+
+| Setting | Where | What it does |
+| --- | --- | --- |
+| **Excluded domains** | Settings → Outreach | Companies never researched or contacted at all — your own domain, partners, customers |
+| **Research each contact only once** | Settings → Outreach | Stops a re-created or re-fired contact from spending a second credit. On by default |
+| **Content language** | Settings → Language | The language every generated message is written in |
+| **Email signature and sender identity** | Settings → Outreach | Required before any email step can send |
+| **Daily limits, sending hours, warm-up** | Each channel's integration page | Per seat and per mailbox — see [LinkedIn](/integrations/linkedin) and [Email](/integrations/email) |
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Does the queue wait time cost me anything?">
+  No. A lead in the queue has not been researched — that is the whole point of the
+  wait. Credits are spent at the moment a filter matches.
+</Accordion>
+
+<Accordion title="I set the wait to 48 hours. Do leads sit unresearched for two days?">
+  Only leads that match nothing. A lead matching a filter is researched and
+  enrolled within about a minute, whatever the wait time is set to.
+</Accordion>
+
+<Accordion title="Are these settings per Autopilot?">
+  No — all three are account-wide. Per-Autopilot decisions (filter, channels,
+  voice, stop conditions) live in the builder.
+</Accordion>
+
+</AccordionGroup>
