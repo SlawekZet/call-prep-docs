@@ -36,8 +36,8 @@ description: Frequently asked questions about the CallPrep API.
 </Accordion>
 
 <Accordion title="Are decision makers available on all plans?">
-  No. Decision makers are a **plan-gated feature** available on Growth and Scale
-  plans. If your plan doesn't include this feature, `decision_makers` will be an
+  No. Decision makers are a **plan-gated feature** available on the **BDR plan and
+  above**. If your plan doesn't include this feature, `decision_makers` will be an
   empty array. You can check your plan on the
   [Billing](https://call-prep-api.vercel.app/billing) page.
 </Accordion>
@@ -55,8 +55,9 @@ description: Frequently asked questions about the CallPrep API.
 </Accordion>
 
 <Accordion title="What should I do if status stays in 'processing' for a long time?">
-  If `status` remains `processing` for more than 3 minutes, the job will
-  automatically transition to `failed`. You can then resubmit the same request.
+  A job stuck in `processing` is failed automatically after 10 minutes. Most
+  research finishes in well under a minute, so anything past a couple of minutes
+  is already unusual. You can then resubmit the same request.
   If this happens repeatedly, please contact
   [hello@callprep.app](mailto:hello@callprep.app) with the `research_id`.
 </Accordion>
@@ -75,9 +76,9 @@ description: Frequently asked questions about the CallPrep API.
 </Accordion>
 
 <Accordion title="How do I update my product context?">
-  Go to [API Keys](https://call-prep-api.vercel.app/api-keys) in the dashboard,
-  find your key, and edit the product settings. Changes apply to all future
-  research requests using that key. Existing cached data is not affected.
+  Go to **Settings → Product** in the dashboard. Your account has one product,
+  used by the API, the Chrome extension and the Autopilot alike. Changes apply to
+  everything generated from then on; research already cached is not rewritten.
 </Accordion>
 
 </AccordionGroup>

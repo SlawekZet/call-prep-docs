@@ -32,11 +32,6 @@
       "url": "https://call-prep-api.vercel.app"
     },
     {
-      "name": "Status",
-      "icon": "signal",
-      "url": "https://status.callprep.app"
-    },
-    {
       "name": "Support",
       "icon": "envelope",
       "url": "mailto:hello@callprep.app"
@@ -56,37 +51,37 @@
             ]
           },
           {
-            "group": "Authentication",
-            "pages": ["authentication/api-keys", "authentication/rate-limits"]
+            "group": "Autopilot",
+            "pages": [
+              "autopilot/overview",
+              "autopilot/build",
+              "autopilot/stop-conditions",
+              "autopilot/activity",
+              "autopilot/templates",
+              "autopilot/analytics",
+              "autopilot/settings"
+            ]
           },
           {
-            "group": "Guides",
-            "pages": ["guides/handling-errors"]
-          },
-          {
-            "group": "SDKs & Examples",
-            "pages": ["sdks/nodejs", "sdks/python", "sdks/curl"]
+            "group": "Chrome extension",
+            "pages": [
+              "extension/overview",
+              "extension/calendar"
+            ]
           },
           {
             "group": "Plans & Limits",
-            "pages": ["plans/overview", "plans/credits", "plans/data-retention"]
+            "pages": [
+              "plans/overview",
+              "plans/credits",
+              "plans/data-retention"
+            ]
           },
           {
             "group": "Support",
-            "pages": ["support/faq", "support/contact"]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Endpoints",
             "pages": [
-              "api-reference/post-research",
-              "api-reference/get-research-status",
-              "api-reference/response-fields",
-              "api-reference/errors"
+              "support/faq",
+              "support/contact"
             ]
           }
         ]
@@ -102,7 +97,45 @@
               "integrations/linkedin",
               "integrations/email",
               "integrations/whatsapp",
-              "integrations/telegram"
+              "integrations/telegram",
+              "integrations/n8n"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api-reference/post-research",
+              "api-reference/get-research-status",
+              "api-reference/response-fields",
+              "api-reference/errors"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "authentication/api-keys",
+              "authentication/rate-limits"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/handling-errors",
+              "guides/polling-best-practices",
+              "guides/caching-behavior"
+            ]
+          },
+          {
+            "group": "SDKs & Examples",
+            "pages": [
+              "sdks/nodejs",
+              "sdks/python",
+              "sdks/curl"
             ]
           }
         ]

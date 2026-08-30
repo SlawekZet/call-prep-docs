@@ -1,0 +1,235 @@
+---
+title: Build your first Autopilot
+description: Step by step through the builder — who it contacts, where it reaches out, how it sounds, what it sends, and when it stops.
+---
+
+Go to **Dashboard → Autopilot** and either **Start from a template** (see
+[Templates](/autopilot/templates)) or **Build from scratch**. This page walks
+through the second one, because that is the version where you see every decision.
+
+{/* SCREENSHOT ap-1 — spec in SCREENSHOTS.md */}
+
+---
+
+## 1. Name
+
+Name it after **who it targets**, not what it sends — `Agencies — Poland`, not
+`Email sequence 2`. In three months this list will have eight rows and you will be
+reading it in a hurry.
+
+---
+
+## 2. Who should it contact?
+
+The filter reads your **HubSpot contact properties**: pick a property, an
+operator, and a value.
+
+| Operator | Use it for |
+| --- | --- |
+| **is** / **is not** | Exact match. Several values means *any of them* |
+| **contains** / **doesn't contain** | Free-text properties |
+| **&gt;**, **≥**, **&lt;**, **≤**, **between** | Numbers — a score, a headcount, a value |
+| **is known** / **is unknown** | Whether the property is filled in at all |
+
+Add up to three rules and choose whether **all** must be true (AND) or **any**
+(OR).
+
+<Warning>
+  **An Autopilot with no rules matches every lead.** The list marks it
+  *Catch-all* and greys out everything below it — nothing further down will ever
+  see a lead. Deliberately, that is a useful bottom-of-the-list Autopilot. By
+  accident, it takes over your whole account.
+</Warning>
+
+<Tip>
+  Properties that get filled in during onboarding are often empty at the moment
+  the contact is created. That is expected and handled: the lead waits in the
+  queue and is re-checked as its data arrives. See
+  [Settings](/autopilot/settings#queue-wait-time).
+</Tip>
+
+---
+
+## 3. Where can it reach out?
+
+Toggle the channels this Autopilot may use. Only channels you have actually
+connected can send.
+
+Under the channels is a line worth reading before you commit: **how many of this
+Autopilot's leads are reachable that way**. A LinkedIn step is useless to a lead
+with no LinkedIn profile, and a WhatsApp step is useless without a phone number in
+your CRM. This is where you find that out, rather than two weeks later.
+
+<Note>
+  WhatsApp and Telegram only message leads who already engaged, unless you switch
+  that off per channel. A sequence made **only** of those steps will wait
+  indefinitely for a warm signal it cannot itself produce — pair them with email
+  or LinkedIn.
+</Note>
+
+---
+
+## 4. How should it sound, and what is it for?
+
+**Tone** changes the voice and the greeting. It never changes what a message asks
+for.
+
+| Tone | Reads like |
+| --- | --- |
+| **Friendly** | Warm and casual, like writing to someone you know a little |
+| **Direct** | The shortest version, no softeners |
+| **Formal** | Polite and professional, no contractions — for enterprise buyers |
+| **Founder** | Personal and honest, typed quickly by a busy founder |
+
+**Goal** is what every message works towards, and some goals need something from
+you before the Autopilot can be switched on:
+
+| Goal | Needs |
+| --- | --- |
+| **Engage with leads** | Nothing — messages simply invite a reply |
+| **Meetings** | Your calendar link (Calendly, Cal.com, anything) |
+| **Self serve** | Your pricing page |
+| **Qualify** | One to three qualifying questions, in the order you want them asked — one per message |
+
+<Warning>
+  A goal without its input cannot be enabled. This is deliberate: a "book a
+  meeting" sequence with no link is a series of messages asking for something the
+  reader cannot do.
+</Warning>
+
+**How did these leads come to you?** — one sentence, in your words
+(*"they registered for a trial"*, *"they downloaded the pricing guide"*). It
+becomes the **opening line of the first message**, which is most of the difference
+between a cold email and an obvious one.
+
+---
+
+## 5. The sequence
+
+Each touch is a **day**, a **channel**, and an **angle**.
+
+- **Day** — 1 is the day the lead is enrolled. Later touches are business days
+  from there.
+- **Channel and kind** — email; LinkedIn *connection request* or *message*;
+  WhatsApp; Telegram.
+- **Angle** — your instruction for what this message should be about. Not the
+  final text: the message is written per lead from the angle plus that lead's
+  research.
+- **Subject angle** (email) — only on the first email when threading is on, since
+  the rest reply inside the same thread.
+- **Uses research** — which signals to build on: their post, their title, the
+  company, the fit with your product. Leave it alone for a sensible default.
+
+### Show example
+
+**Show example** renders a real message for a real lead of yours, through the same
+code path that sends, with your signature underneath. If you would not send that
+one, change the angle and look again.
+
+{/* SCREENSHOT ap-2 — spec in SCREENSHOTS.md */}
+
+### What the angle can and cannot do
+
+Your angle **outranks** the house writing rules — it is your campaign. Four things
+it cannot override, because they are not style preferences:
+
+- the length a channel physically allows
+- **inventing facts** — including a performance number that is not in your product
+  description or in the research
+- the rule that a reshared post is not the lead's own words
+- the sender-identity block on commercial email
+
+<Tip>
+  Quote a sentence in the angle and it will be reproduced nearly word for word in
+  **every** message from that step. That is a good way to pin an opening you like
+  — and a good way to send four hundred people the same sentence. The builder
+  warns you when a step does this.
+</Tip>
+
+### A note on LinkedIn steps
+
+LinkedIn works in two moves: a **connection request**, then a **message** once it
+is accepted. A message step waits for the acceptance on its own and gives up after
+a week rather than hanging forever. A second connection request in the same
+sequence can never do anything — LinkedIn allows one — and the builder says so.
+
+### ✨ Build with AI
+
+**Build with AI** drafts the whole sequence from your product, channels and
+filter. Treat it as a first draft: read every angle, run **Show example** on at
+least the first two touches, and cut anything you would not send yourself.
+
+---
+
+## 6. When should it stop?
+
+| Condition | What it means |
+| --- | --- |
+| **They reply — on any channel** | Email, LinkedIn, WhatsApp or Telegram. Leave this on. |
+| **You log a connected call, or they book a meeting (in HubSpot)** | Someone on your side already picked this lead up. |
+| **LinkedIn invite accepted (you're connected)** | A choice, not a default — see below. |
+| **A CRM property changes** | Nominate a property and a value. Leave the value empty to stop on any change. |
+
+<Warning>
+  **An accepted connection request is a connection, not an answer.** Turn this on
+  if connecting *is* the goal of the sequence — the acceptance is then counted as
+  a win. Leave it off if you plan to say something afterwards, or the sequence will
+  end exactly when it becomes useful.
+</Warning>
+
+Full detail, including what deliberately does **not** stop a sequence, is on
+[What stops a sequence](/autopilot/stop-conditions).
+
+---
+
+## 7. Save and switch on
+
+Save from the bar at the bottom, then switch the Autopilot on in the list.
+
+From that moment, a **new** contact matching the filter is researched and enrolled
+within about a minute. Existing contacts are not swept up — the Autopilot acts on
+contacts created from now on.
+
+After a day or two, check:
+
+- the **counters on the row** — leads, active, responded
+- the **delivery chip**, which appears only when leads are sitting uncontacted
+- **[Activity](/autopilot/activity)** for individual leads and skip reasons
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="How many touches should a sequence have?">
+  Three or four over two weeks is a sequence. Twelve is a campaign nobody finished
+  reading. Note that the last email is written to ask for nothing — it exists to
+  close politely, so cutting it makes the sequence end mid-pitch.
+</Accordion>
+
+<Accordion title="Can I edit an Autopilot that is already running?">
+  Yes, and the changes apply to messages that have not been sent yet. Leads
+  already enrolled keep their place in the sequence. Deleting a step from the
+  middle can leave already-scheduled messages without a matching angle — they fall
+  back to a generic one rather than sending something written for a different step.
+</Accordion>
+
+<Accordion title="What happens if I archive an Autopilot?">
+  It stops routing new leads and leads in flight are stopped, but everything it
+  did stays: the leads, the messages, the analytics. Nothing is deleted, and a lead
+  that already replied keeps its win.
+</Accordion>
+
+<Accordion title="Why is my second connection request greyed out or ignored?">
+  LinkedIn accepts one connection request per person. A second one in the same
+  sequence can only ever be skipped, so the builder defaults a new LinkedIn touch to
+  *message* once a request already exists.
+</Accordion>
+
+<Accordion title="Can two Autopilots share a mailbox or a LinkedIn seat?">
+  Yes. Channels belong to your account, not to one Autopilot, and the daily limits
+  are per mailbox or per seat — shared across everything you run.
+</Accordion>
+
+</AccordionGroup>

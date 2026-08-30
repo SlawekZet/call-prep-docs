@@ -1,0 +1,143 @@
+---
+title: Chrome extension
+description: Research a prospect from a side panel in your browser, see your upcoming meetings with the attendees already researched, and connect LinkedIn in one click.
+---
+
+## What it is
+
+**AI Call Prep App** is a Chrome side panel: your upcoming meetings, the people in
+them already researched, and a box to research anyone else by email. Same account,
+same credits and same research as the dashboard and the API — a different way in.
+
+<CardGroup cols={2}>
+  <Card title="Install from the Chrome Web Store" icon="chrome" href="https://chromewebstore.google.com/detail/mikgdlikgfmggeelklbegnlmlihalpfe">
+    Add it to Chrome, then pin it to your toolbar.
+  </Card>
+  <Card title="Calendar and battlecards" icon="calendar" href="/extension/calendar">
+    Automatic research for new meetings, and the briefing email that follows.
+  </Card>
+</CardGroup>
+
+---
+
+## Setup
+
+### 1. Install and open
+
+Install from the Chrome Web Store, pin the icon to your toolbar, and click it to
+open the side panel. It opens beside whatever page you are on and stays there
+while you work.
+
+{/* SCREENSHOT ext-1 — spec in SCREENSHOTS.md */}
+
+### 2. Sign in with Google
+
+**Continue with Google.** The extension signs in with Google only — if your
+CallPrep account uses the same Google address, it is the same account, with the
+same plan and the same credits.
+
+### 3. Tell it about your product
+
+On first run it asks for three things, and they are worth two minutes:
+
+| Question | Why it matters |
+| --- | --- |
+| **Your product** — paste your website and it drafts the description, features and target customers | Every insight is written against this. A vague product description produces vague synergy points |
+| **Sales methodology** — Consultative, Challenger, Solution, Sandler, Value or Inbound Selling | Shapes the discovery questions you get |
+| **Excluded domains** | Companies never researched or contacted — your own domain, partners, customers |
+
+All three stay editable later, in **Settings** inside the extension and in the
+dashboard under **Settings → Product** and **Settings → Outreach**. They are the
+same settings, not a second copy.
+
+---
+
+## What you can do in the panel
+
+### Research someone by email
+
+Type an email address and the research starts. It takes roughly 20 to 60 seconds,
+or a couple of seconds if that person was researched recently. **One credit per
+research.**
+
+You can have a couple of researches running at once; the panel says so when you
+reach the limit.
+
+### See your meetings
+
+With Google Calendar connected, the panel lists your upcoming meetings, and each
+external attendee can be researched from the meeting card — or researched
+automatically before you get there. See
+[Calendar and battlecards](/extension/calendar).
+
+### Read the research
+
+Each result opens in tabs:
+
+- **Insights** — a summary of the person, opening lines drawn from their recent
+  LinkedIn activity, synergy points with your product, competitive notes
+- **Company** — description, industry, HQ, size, tech stack, what they sell, who
+  they sell to, discovery questions to ask
+- **Decision makers** — other senior people at that company, with titles and
+  LinkedIn profiles *(BDR plan and above)*
+- **Social** — recent posts from the prospect and the company, and company news
+
+### Find an earlier research
+
+The research list holds everything your account has researched, searchable and
+sortable, with an **Extension only** filter when you want just the ones from here.
+
+### Connect LinkedIn in one click
+
+**Settings → LinkedIn integration** connects the LinkedIn account your Autopilot
+outreach sends from, using the session already open in this browser — no password,
+and it works if you sign in to LinkedIn with Google. This is the same seat you
+would otherwise connect in the dashboard; see
+[LinkedIn](/integrations/linkedin).
+
+---
+
+## Credits and plans
+
+The extension draws on the **same monthly credits** as everything else: one credit
+per research, whether it was started by you or automatically from a meeting.
+Cached results still cost a credit — see [Credits](/plans/credits).
+
+Decision makers require the **BDR plan or above**; on other plans that tab stays
+empty.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Do I need a separate account for the extension?">
+  No. Sign in with the Google address on your CallPrep account and it is the same
+  account — same plan, same credits, same research history, same product.
+</Accordion>
+
+<Accordion title="Does the extension read the pages I visit?">
+  No. It reads nothing from the pages you browse. It talks to CallPrep, to Google
+  for sign-in and calendar, and — only when you connect LinkedIn from Settings —
+  to your LinkedIn session in this browser, once, to establish that connection.
+</Accordion>
+
+<Accordion title="I researched someone and the summary says nothing useful.">
+  That means the data sources had little to say about that address. It happens with
+  personal mailboxes and very small companies. The company block is still built
+  from the email domain where possible, and you keep the discovery questions.
+</Accordion>
+
+<Accordion title="Can I use the extension and the API on one account?">
+  Yes, and they share everything: one product, one credit pool, one research
+  history. A prospect researched in the extension returns instantly through the
+  API, and the other way round.
+</Accordion>
+
+<Accordion title="Which browsers work?">
+  Chrome, and Chromium browsers that install from the Chrome Web Store and support
+  side panels (Edge, Brave, Arc). Firefox and Safari are not supported.
+</Accordion>
+
+</AccordionGroup>

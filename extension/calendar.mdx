@@ -1,0 +1,149 @@
+---
+title: Calendar and battlecards
+description: Connect Google Calendar so new meetings are researched before you get to them, and a briefing email lands in your inbox with everything worth knowing.
+---
+
+## What this does
+
+With Google Calendar connected, the extension lists your upcoming meetings and can
+research the person you are about to meet **before the meeting exists in your
+head** — then email you a battlecard about them.
+
+```
+A new meeting appears in your calendar
+      ↓
+It has an external attendee who has not been researched yet
+      ↓
+Research runs on its own  (1 credit)
+      ↓
+A battlecard email arrives · the meeting card in the panel fills in
+```
+
+<Note>
+  Calendar access is **read-only**. CallPrep never creates, edits, moves or
+  cancels anything in your calendar.
+</Note>
+
+---
+
+## Connecting
+
+Google Calendar is connected as part of signing in to the extension with Google —
+approve the calendar permission when Chrome asks for it. Your meetings then appear
+in the side panel.
+
+{/* SCREENSHOT ext-2 — spec in SCREENSHOTS.md */}
+
+If the connection later expires, the panel says so and offers **Reconnect with
+Google**. Nothing is lost while it is disconnected, except the automatic research
+that would have run.
+
+---
+
+## Automatic research
+
+**Settings → auto research** in the extension.
+
+Off, meetings are listed and you research whoever you like by hand. On, a new
+meeting is researched on its own.
+
+### Exactly what gets researched
+
+- **One person per new meeting** — the first external attendee who has not been
+  researched yet. Not every attendee, and not the whole room
+- **You are never researched**, and neither is anyone on an
+  **[excluded domain](/autopilot/settings)**
+- A meeting whose attendees you have already researched is skipped
+- **One credit per automatic research**, from the same monthly pool as everything
+  else
+
+<Warning>
+  A busy calendar spends credits without being asked. If you sit in a lot of
+  internal or recurring meetings with outside guests, add those domains to
+  **Excluded domains** first, or leave automatic research off and research the two
+  meetings a week that matter.
+</Warning>
+
+When your credits run out, automatic research stops until they reset. Nothing
+breaks; the meetings are simply listed unresearched.
+
+---
+
+## The battlecard email
+
+When a meeting-driven research finishes, CallPrep emails you a briefing. It is
+worth having in your inbox: it arrives while you are somewhere else, and it is
+readable on a phone two minutes before the call.
+
+It comes in three shapes, depending on what was actually found:
+
+| Shape | When | What you get |
+| --- | --- | --- |
+| **Full battlecard** | The person and their company were both found | Who they are, what the company does, synergy points with your product, opening lines from their recent activity, discovery questions |
+| **Short battlecard** | The person was found but there is nothing solid about the company | The person, the opening lines and the questions. The company sections are left out rather than printed empty |
+| **A short note** | Nothing solid was found | One paragraph saying so, and why — either there was no public trace of this person, or a data source did not answer |
+
+<Note>
+  That third one is deliberate. Silence would leave you wondering whether the
+  briefing was still coming; a note tells you there is nothing to wait for, while
+  there is still time to look them up yourself.
+</Note>
+
+To stop these emails: **Settings → Notifications → Meeting battlecard** in the
+dashboard.
+
+---
+
+## What is stored, and for how long
+
+| Data | Kept |
+| --- | --- |
+| Meetings read from your calendar (title, time, attendees) | **30 days**, then deleted automatically |
+| The research itself (prospect, company, insights) | Under the normal [data retention](/plans/data-retention) rules |
+
+Disconnecting the calendar (**Settings → auto research → Disconnect Google
+Calendar**) deletes the meetings CallPrep stored and stops any further reading of
+your calendar. **Research you already ran stays** — it is yours, and it is not
+calendar data.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Which calendar does it read?">
+  The primary calendar of the Google account you signed in with, read-only.
+  Meetings without an external attendee are ignored.
+</Accordion>
+
+<Accordion title="Does it research everyone in a five-person meeting?">
+  No — one person per meeting, the first external attendee who has not been
+  researched yet. Research the others by hand from the meeting card if you need
+  them.
+</Accordion>
+
+<Accordion title="How long before the meeting does it run?">
+  It runs when the meeting **appears in your calendar**, not on a timer before it.
+  A meeting booked a week out is researched a week out; one booked an hour before
+  is researched then. That is also when the battlecard email is sent.
+</Accordion>
+
+<Accordion title="Does an AI see my calendar?">
+  No. What reaches the AI is the prospect's public professional data — name,
+  title, company, LinkedIn activity — plus your product description. Meeting
+  titles, descriptions and attendee lists are not sent to it.
+</Accordion>
+
+<Accordion title="Can I get battlecards without the extension?">
+  Not today — the calendar connection lives in the extension. Any research started
+  from a meeting produces the email; researching by email address in the dashboard
+  or the API does not.
+</Accordion>
+
+<Accordion title="I disconnected the calendar. Are my meetings gone from CallPrep?">
+  Yes, the stored meetings are deleted on disconnect, and they would have been
+  deleted after 30 days anyway. Your research history is untouched.
+</Accordion>
+
+</AccordionGroup>

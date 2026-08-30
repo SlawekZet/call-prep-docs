@@ -1,0 +1,151 @@
+---
+title: Autopilot overview
+description: How the Autopilot turns a new CRM contact into researched, personalised outreach across LinkedIn, email, WhatsApp and Telegram — and stops the moment someone answers.
+---
+
+## What an Autopilot is
+
+An Autopilot is **three decisions**:
+
+1. **Who** gets contacted — a filter over your HubSpot contact properties
+2. **What** is said to them — a sequence of touches, each written per lead from that lead's research
+3. **When it stops** — a reply, a booked meeting, a CRM change
+
+Everything between those decisions happens on its own: the research, the writing,
+the sending, the pacing, the daily limits and the record in your CRM.
+
+```
+New contact in HubSpot
+      ↓
+Does it match one of your Autopilots?  ── no ──→  waits in the queue, then is
+      ↓ yes                                       abandoned (no research, no credit)
+Research the person and their company   (1 credit)
+      ↓
+Enrol into that Autopilot's sequence
+      ↓
+Touch by touch, from your own LinkedIn account / mailbox / number
+      ↓
+They answer → the sequence stops, on every channel
+```
+
+<Note>
+  You can run several Autopilots side by side — one for inbound signups, one for
+  a prospected list, one as a catch-all. A lead only ever belongs to **one** of
+  them at a time.
+</Note>
+
+---
+
+## What you need before it can run
+
+| Requirement | Where | Why |
+| --- | --- | --- |
+| A product | Settings → Product | Every message is written from your product description. Without it there is nothing to say. |
+| HubSpot connected | [Integrations → HubSpot](/integrations/hubspot) | This is what tells CallPrep a lead exists. |
+| At least one channel | [LinkedIn](/integrations/linkedin), [Email](/integrations/email), [WhatsApp](/integrations/whatsapp), [Telegram](/integrations/telegram) | A channel is where messages send from. An Autopilot with no connected channel has nowhere to go. |
+| Sender identity (email only) | Settings → Outreach → Email signature | Commercial email must identify the sender. Email steps are held until it is complete. |
+
+---
+
+## Which Autopilot gets a lead
+
+Autopilots are checked **top to bottom**, and the **first matching filter wins**.
+Nothing further down ever sees that lead. Use the arrows on the list to reorder —
+specific Autopilots above, broad ones below.
+
+- An Autopilot with **no filter** matches every lead. That is occasionally what
+  you want, as a catch-all at the bottom of the list, and never what you want by
+  accident. The list marks it **Catch-all** and greys out everything beneath it as
+  *Never reached*.
+- A **fallback Autopilot** is checked differently: it is skipped during the normal
+  pass and gets the **last look** at a lead just before it would be abandoned. It
+  keeps its own filter — a fallback is not the same thing as a catch-all.
+- A lead already in an active sequence is not enrolled a second time.
+
+---
+
+## What it costs
+
+**One credit per researched lead** — the same pool as the API and the Chrome
+extension. Sending, retrying, skipping and rescheduling are all free.
+
+A lead costs **nothing** when it is:
+
+- abandoned after matching no filter
+- skipped by *Addresses to skip* or *Excluded domains*
+- already researched for this product (with **Research each contact only once** on,
+  the default)
+
+See [Credits](/plans/credits).
+
+---
+
+## Where everything lives
+
+<CardGroup cols={2}>
+  <Card title="Build your first Autopilot" icon="wand-magic-sparkles" href="/autopilot/build">
+    Name, filter, channels, voice, the sequence, stop conditions.
+  </Card>
+  <Card title="What stops a sequence" icon="hand" href="/autopilot/stop-conditions">
+    What ends it, what deliberately does not, and the one CRM gap to know about.
+  </Card>
+  <Card title="Activity and troubleshooting" icon="magnifying-glass" href="/autopilot/activity">
+    Why a message was not sent, where a missing lead went, closing a lead by hand.
+  </Card>
+  <Card title="Templates" icon="copy" href="/autopilot/templates">
+    Start from a ready-made Autopilot instead of a blank one.
+  </Card>
+  <Card title="Analytics" icon="chart-line" href="/autopilot/analytics">
+    Outcomes, responded rate, and what counts as a win.
+  </Card>
+  <Card title="Settings" icon="sliders" href="/autopilot/settings">
+    Queue wait time, addresses to skip, dropping messages that fall behind.
+  </Card>
+</CardGroup>
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="I turned an Autopilot on and nothing happened.">
+  Nothing is wrong yet — an Autopilot only acts on contacts **created after** it
+  was switched on. Existing contacts are not swept up. If a new contact was
+  created and still nothing happened, work through
+  [Activity and troubleshooting](/autopilot/activity).
+</Accordion>
+
+<Accordion title="Does it contact people who are already my customers?">
+  Only if your filter lets it. Two guards help: **Excluded domains**
+  (Settings → Outreach) skips whole companies for good, and a stop condition on a
+  CRM property ends a sequence the moment someone's lifecycle stage moves. Both
+  are worth setting before the first Autopilot goes live.
+</Accordion>
+
+<Accordion title="Can one lead be in two Autopilots at once?">
+  No. The first matching filter wins, and a lead in an active sequence is not
+  enrolled again. It can enter a different Autopilot later, once the first
+  sequence has ended and the contact comes back through your CRM.
+</Accordion>
+
+<Accordion title="Do I have to write the messages?">
+  No. You write the **angle** for each touch — the instruction — and the message
+  itself is written per lead from that lead's research. **Show example** in the
+  builder renders a real one before you commit.
+</Accordion>
+
+<Accordion title="What happens to a lead the research came up empty on?">
+  The first email still goes out, because a first message can honestly ask what
+  someone is trying to achieve. Later messages and the other channels need
+  something real to say, and skip rather than send filler — with the reason
+  recorded on the lead's timeline.
+</Accordion>
+
+<Accordion title="Can I pause everything at once?">
+  Switch the Autopilots off, or pause the channel: a paused LinkedIn seat or
+  mailbox stops sending while keeping every lead enrolled. Leads resume where they
+  left off.
+</Accordion>
+
+</AccordionGroup>

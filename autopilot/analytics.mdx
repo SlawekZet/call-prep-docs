@@ -1,0 +1,110 @@
+---
+title: Autopilot analytics
+description: Outcomes, responded rate and the weekly trend — what each number counts, and the one setting that changes what "responded" means.
+---
+
+**Dashboard → Autopilot → 📈 Analytics**, or read the counters on each Autopilot
+row for the same figures per Autopilot.
+
+---
+
+## The four outcomes
+
+Every lead that has ever entered an Autopilot is in exactly one of these:
+
+| Outcome | Meaning |
+| --- | --- |
+| **Active** | The sequence is still running |
+| **Responded** | A win — see below |
+| **Closed** | It ended without a win: the sequence finished, they unsubscribed, a CRM property changed, you closed it by hand, there was no reachable channel |
+| **Failed** | Something went wrong that was not the lead's doing. In practice this is empty |
+
+**Responded rate** = responded ÷ all leads enrolled. It is the number worth
+watching over time, and the one that makes two Autopilots comparable.
+
+<Note>
+  An outcome is not the same as the operational status. A lead who replied on day
+  two counts as **responded** immediately, even while the last messages are being
+  cancelled.
+</Note>
+
+---
+
+## What counts as responded
+
+Four things, broken out separately in the mix:
+
+| Win | Comes from |
+| --- | --- |
+| **Email reply** | They answered your email |
+| **Call connected** | A call logged on the HubSpot contact with a *Connected* outcome |
+| **Meeting booked** | A meeting logged on the contact after the lead was enrolled |
+| **LinkedIn accept** | The connection request was accepted — **only counted on Autopilots where you switched that stop condition on** |
+
+<Warning>
+  **That last row is the one to understand.** If *LinkedIn invite accepted* is not
+  one of your stop conditions, an acceptance is recorded as a **connection**, not
+  as a response — it appears in its own `Connected` count and stays out of your
+  responded rate.
+
+  This is deliberate. Leaving that condition off is a statement that connecting is
+  not the goal, and a responded rate that counted it anyway would flatter the
+  Autopilot for something you said did not count.
+</Warning>
+
+Autoresponders and out-of-office replies never count.
+
+---
+
+## The weekly trend
+
+Leads enrolled per week as bars, responded rate as a line over them. Read them
+together: a good-looking rate on a week with four leads is noise, and a dip on a
+week you imported a list is arithmetic, not a regression.
+
+{/* SCREENSHOT ap-7 — spec in SCREENSHOTS.md */}
+
+---
+
+## Reading the numbers honestly
+
+- **A responded rate below your expectations, with a healthy first-message count**,
+  is a message problem — read what actually went out in
+  [Activity](/autopilot/activity) and fix the angles.
+- **A responded rate that cannot move because almost nothing was sent** is a
+  delivery problem. Check the delivery chip and the capacity bars first.
+- **A high closed count with no wins** on a young Autopilot usually means leads
+  ran out of sequence rather than out of interest — the sequence may be too short,
+  or too much of it landed on channels those leads are not reachable on.
+- **Wins that arrive after the sequence ended** still count. A reply weeks later
+  is recorded against the lead.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Why does my Autopilot show more 'connected' than 'responded'?">
+  Because accepted LinkedIn invites are being recorded as connections. If
+  connecting is what you wanted from that sequence, switch on **LinkedIn invite
+  accepted** in its stop conditions and future acceptances count as wins.
+</Accordion>
+
+<Accordion title="Do the numbers change retroactively when I change a stop condition?">
+  No. Wins are recorded as they are observed, with the rules in force at that
+  moment. Last quarter's chart is not rewritten by a checkbox today.
+</Accordion>
+
+<Accordion title="Where do I see revenue or pipeline?">
+  Not here. CallPrep records what happened to the outreach — replies, calls,
+  meetings. What those turn into is your CRM's question, which is why every touch
+  is written back onto the HubSpot contact.
+</Accordion>
+
+<Accordion title="An archived Autopilot's leads — do they still count?">
+  Yes. Archiving takes an Autopilot out of routing; it does not rewrite what it
+  did. Its leads, messages and wins stay in the record.
+</Accordion>
+
+</AccordionGroup>

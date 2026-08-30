@@ -1,51 +1,152 @@
 ---
 title: Data retention
-description: How long CallPrep stores enriched data and how GDPR applies.
+description: What CallPrep stores about the people you research, how long it keeps it, what happens on a deletion request, and how GDPR applies.
 ---
 
-## Prospect and company data
+## The short version
 
-Enriched prospect and company data is **stored indefinitely** — we do not automatically
-delete it. Data is refreshed (overwritten) when a new research request is submitted
-after the refresh window has elapsed.
+- Enriched data about a person is **deleted or stripped of personal data after 12
+  months**, automatically, every night.
+- Working records that carry an address in passing are cleared after **90 days**.
+- Meetings read from your calendar are deleted after **30 days**.
+- An **unsubscribe is kept for good** — deleting it on a timer would mean
+  contacting someone who asked you not to.
+- Deleting your account removes your data **immediately**, not on a timer.
 
-| Data type       | Refresh window | On refresh                                |
-| --------------- | -------------- | ----------------------------------------- |
-| Prospect data   | 30 days        | Previous record overwritten with new data |
-| Company data    | 90 days        | Previous record overwritten with new data |
-| Decision makers | 60 days        | Previous record overwritten with new data |
+---
 
-Within the refresh window, repeated research requests return the existing enriched data
-immediately — no new enrichment is run.
+## What is stored, and for how long
+
+| What | Kept for | Then |
+| --- | --- | --- |
+| Prospect records — name, title, LinkedIn profile, photo, AI summary | **365 days** since last update | Deleted |
+| Company records | **365 days** since last update | Deleted |
+| Decision-maker records scraped from company pages | **180 days** | Deleted |
+| Research jobs and their results | **365 days** | Personal data removed; the record of the run — date, status, cost — is kept |
+| Outreach sequences and the messages sent in them | **365 days** | Names, addresses and message content removed; the record of what was sent and when is kept |
+| Working records that carry an address in passing (enrolment decisions, bounce records, queued leads) | **90 days** | Deleted |
+| Meetings read from Google Calendar | **30 days** | Deleted |
+| Unsubscribes and suppression entries | **Kept** | Never deleted |
+| Consent and audit records | **Kept** | Never deleted |
 
 <Note>
-  If a prospect or company contacts you with a data deletion request under GDPR,
-  contact us at [hello@callprep.app](mailto:hello@callprep.app) and we will
-  permanently delete all data associated with that person or company from our
-  systems.
+  **Why some records are stripped rather than deleted.** A sent message is two
+  things at once: a record about a person, and a record of what your account did.
+  Deleting it would quietly rewrite your own history — fewer leads last quarter,
+  different response rates, costs that no longer add up. So the personal data comes
+  out and the shape of the record stays. After that it is no longer personal data,
+  and your analytics still say what they said yesterday.
 </Note>
 
-## Research logs
+The purge runs **daily**. Nothing has to be requested for it to happen.
 
-Pipeline execution logs (costs per step, duration, statuses) are retained for **12 months**.
+---
 
-## Error logs
+## Refresh windows — different thing, same page
 
-Error logs are retained for **6 months**.
+Retention is when data is *deleted*. A refresh window is how long enriched data is
+considered **fresh enough to reuse** instead of paying to look it up again.
+
+| Data | Refresh window |
+| --- | --- |
+| Prospect | 30 days |
+| Company | 90 days |
+| Decision makers | 180 days |
+
+Inside the window, a repeat research returns what is already there — see
+[Caching behaviour](/guides/caching-behavior). Outside it, the data is looked up
+again and the record is overwritten.
+
+---
+
+## Deleting one person's data on request
+
+If someone asks to be deleted — a prospect, a lead, anyone in your CRM — send the
+request to [hello@callprep.app](mailto:hello@callprep.app) with the email address.
+We run a targeted erasure:
+
+- Their **prospect record is deleted**
+- **Research jobs, sequences and sent messages** covering them keep their shape
+  with the personal data removed
+- **Any running sequence for them is stopped**
+- Their address is **added to the suppression list by default**, so a later import
+  cannot start contacting them again. Say so if you do not want that
+- The erasure itself is **recorded permanently** — that record is the proof the
+  request was honoured, and when
+
+The **company record is not deleted**: it describes an employer, is shared by
+everyone at that domain, and is not personal data about the person asking.
+
+We can scope the erasure to your account alone, or run it across every account
+where that address appears — say which when you write.
+
+---
+
+## Deleting your account
+
+Deleting your CallPrep account removes your data **immediately and in full**:
+research, prospects, companies, sequences, messages, mailboxes, seats, integration
+connections, API keys, calendar meetings.
+
+Two things survive, deliberately and without identifying you: consent and audit
+records, kept as evidence that permissions were granted and warnings were shown,
+and operational error logs used to keep the service running.
+
+---
 
 ## GDPR
 
-CallPrep processes personal data (prospect names, email addresses, LinkedIn profiles)
-on your behalf as a **data processor**. You — as the company using the API — are
-the **data controller** and are responsible for ensuring you have a lawful basis
-for processing prospect data.
+CallPrep processes personal data (names, business email addresses, LinkedIn
+profiles, job titles) **on your behalf, as a processor**. You are the controller,
+and you are responsible for having a lawful basis for contacting the people you
+put into it.
 
-Key points:
+- **Data is stored in the EU** — Supabase, `eu-west-1` (Ireland)
+- **Your data is scoped to your account.** Other customers never see it
+- **We never sell your data**, and we never make it available to another customer
+- Enrichment necessarily involves **sub-processors** — data providers, an AI model
+  provider, email delivery and messaging infrastructure. They are named in the DPA
+- **Deletion requests** from the people you research are handled as described
+  above
 
-- Data is stored in the EU (Supabase EU West region)
-- Prospect and company data is scoped to your account — other users never access your data
-- We do not sell or share enriched data with third parties
-- Deletion requests from prospects should be forwarded to [hello@callprep.app](mailto:hello@callprep.app)
-- Account deletion removes all associated enriched data within 30 days of your request
+For a **Data Processing Agreement**, write to
+[hello@callprep.app](mailto:hello@callprep.app).
 
-For a Data Processing Agreement (DPA), contact [hello@callprep.app](mailto:hello@callprep.app).
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Does the 12-month clock start when the lead was created?">
+  It runs from when the record was **last updated**. Researching the same person
+  again refreshes them, and the clock restarts from that point.
+</Accordion>
+
+<Accordion title="Will my analytics change when old data is purged?">
+  No. That is the reason records are stripped rather than deleted: counts, dates,
+  outcomes and costs stay exactly as they were.
+</Accordion>
+
+<Accordion title="Someone unsubscribed. Is that personal data you should delete?">
+  It is a record that says "do not contact this address" — deleting it on a
+  schedule would produce exactly the harm the request was meant to prevent. It is
+  kept, it is never used for anything else, and it stops every channel.
+</Accordion>
+
+<Accordion title="Can I export everything you hold about my leads?">
+  Yes. Write to [hello@callprep.app](mailto:hello@callprep.app) and we will export
+  the research and outreach records on your account.
+</Accordion>
+
+<Accordion title="Do you train AI models on my data?">
+  No. Your product description and prospect data are sent to the model to generate
+  the output you asked for, under terms that do not permit training on it.
+</Accordion>
+
+<Accordion title="What happens to data when I downgrade or cancel?">
+  Retention is unchanged by the plan — the same windows apply. Cancelling stops
+  new research; deleting your account removes the data.
+</Accordion>
+
+</AccordionGroup>
