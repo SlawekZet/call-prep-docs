@@ -1,0 +1,167 @@
+---
+title: WhatsApp Integration
+description: Connect your WhatsApp number and let the Autopilot follow up with leads who already engaged — warm-only by default, 20 messages a day, from your own number.
+---
+
+## Overview
+
+Connect the WhatsApp number your outreach is sent from. Messages go out from
+**your own number**, exactly as if you typed them.
+
+WhatsApp is a follow-up channel by design. Out of the box it messages **only
+leads who already engaged** — someone who accepted your LinkedIn invite or
+replied to your email. Cold messaging is possible, but you have to switch it on
+deliberately.
+
+<Note>
+  Add a **WhatsApp step** to a sequence in **Dashboard → Autopilot** — a
+  connected number on its own never sends anything. WhatsApp is available on the
+  BDR+ plan; see the [Billing page](https://call-prep-api.vercel.app/billing).
+</Note>
+
+---
+
+## Setup
+
+### Step 1 — Connect your number
+
+Go to **Integrations → WhatsApp** and click **Connect WhatsApp**. A page opens
+with a QR code: scan it from your phone the same way you would sign in to
+WhatsApp Web (**WhatsApp → Settings → Linked devices → Link a device**). You are
+returned to CallPrep and the number shows as *connected*.
+
+{/* SCREENSHOT wa-1 — spec in SCREENSHOTS.md */}
+
+<Warning>
+  Keep the phone online and the linked device in place. If you unlink CallPrep
+  from your phone, or the session expires, the number goes to *disconnected* and
+  WhatsApp steps stop until you reconnect.
+</Warning>
+
+### Step 2 — Tell CallPrep where the phone number lives
+
+Under **Phone number source**, list the HubSpot contact properties that hold the
+lead's number, in the order they should be tried. The default is *Mobile phone
+number*, then *Phone number*.
+
+Numbers should be in international format (for example `+48 600 123 456`). A lead
+with no number on any of the listed properties is skipped, with *No phone number
+on the contact* on the timeline — and the number is looked up again in HubSpot
+right before each send, so a number added later still gets used.
+
+{/* SCREENSHOT wa-2 — spec in SCREENSHOTS.md */}
+
+### Step 3 — Set the schedule
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| **Timezone** | Your browser's timezone | Everything below is in this timezone |
+| **Send from / Send until** | 06:00 – 22:00 | A WhatsApp message at 3 a.m. is worse than no message |
+| **Send on weekends** | Allowed | WhatsApp is not a professional network — weekends are normal here |
+| **Daily limit** | Up to **20** messages | A hard ceiling. It cannot be raised, only lowered |
+
+---
+
+## Who can be messaged
+
+This is the most important setting on the page.
+
+**Warm leads only (recommended, on by default).** A WhatsApp step is sent only
+after the lead has shown a warm signal — they accepted your LinkedIn invite or
+replied to your email. Until then the message waits and is re-checked; if the
+lead never warms up within three weeks it is dropped with *never warm* on the
+timeline, and the rest of the sequence carries on.
+
+**Cold outreach (off by default).** Turning warm-only off lets this number
+message people who never responded. CallPrep asks you to confirm and records the
+decision, because messaging strangers' phone numbers is the exact pattern
+WhatsApp bans for — and WhatsApp bans outright, with no restricted middle state
+like LinkedIn's.
+
+{/* SCREENSHOT wa-3 — spec in SCREENSHOTS.md */}
+
+---
+
+## What gets sent
+
+Messages are written per lead from the research and from the angle you gave the
+step. They are deliberately **very short** — a couple of lines, no links, no
+emoji, and they say who you are, because an unexplained message from an unknown
+number gets reported.
+
+If the research found nothing credible to build on, the message is skipped with a
+reason rather than sent as filler.
+
+Every message sent is logged as a note on the HubSpot contact, and a reply stops
+the sequence on all channels.
+
+---
+
+## Pausing and disconnecting
+
+- **Pause** stops this number sending while keeping the connection.
+- **Disconnect** removes it. WhatsApp steps have nowhere to send from until a
+  number is connected again. You can also remove CallPrep from your phone under
+  **WhatsApp → Linked devices**.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Does this use the WhatsApp Business API?">
+  No. It links to your existing WhatsApp account as a device, the same mechanism
+  as WhatsApp Web — so messages come from your normal number, with no templates
+  to get approved and no per-message fee.
+</Accordion>
+
+<Accordion title="Can I message leads who never replied to anything?">
+  Only if you switch **Warm leads only** off, confirm the warning and accept the
+  risk. We keep it on by default because unsolicited WhatsApp messages are what
+  gets numbers banned.
+</Accordion>
+
+<Accordion title="Can I send more than 20 messages a day?">
+  No. The limit is enforced in the product, so a higher number would be a setting
+  that silently does nothing. It protects the number.
+</Accordion>
+
+<Accordion title="Most of my WhatsApp steps are skipped — why?">
+  Almost always because the lead has no phone number in HubSpot. Open the
+  Autopilot's **Activity** and expand a lead to see the reason on each step, and
+  check the delivery chip on the Autopilot row for how many of its leads have a
+  number at all. Inbound leads who filled in a form usually have one; prospected
+  lists usually do not.
+</Accordion>
+
+<Accordion title="Where does the phone number come from?">
+  From HubSpot, using the properties you listed under **Phone number source**, in
+  order. CallPrep does not buy or guess phone numbers.
+</Accordion>
+
+<Accordion title="Does my phone need to stay on?">
+  Yes. The link works like WhatsApp Web: your phone has to be reachable, and if
+  the device is unlinked the connection ends and CallPrep tells you it is
+  disconnected.
+</Accordion>
+
+<Accordion title="Will the lead see that this was automated?">
+  There is no marker on the message — it comes from your number and reads like
+  something you wrote. Which is also why the messages are short, mention who you
+  are, and never carry a link.
+</Accordion>
+
+<Accordion title="What happens if someone answers?">
+  The sequence stops on every channel, and the reply counts as a win in the
+  Autopilot's analytics. Answer them yourself in WhatsApp as usual.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Need help?
+
+Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you
+connect your number.

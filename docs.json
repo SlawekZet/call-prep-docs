@@ -96,7 +96,14 @@
         "groups": [
           {
             "group": "Integrations",
-            "pages": ["integrations/hubspot", "integrations/linkedin"]
+            "pages": [
+              "integrations/overview",
+              "integrations/hubspot",
+              "integrations/linkedin",
+              "integrations/email",
+              "integrations/whatsapp",
+              "integrations/telegram"
+            ]
           }
         ]
       }

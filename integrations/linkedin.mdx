@@ -1,146 +1,155 @@
 ---
 title: LinkedIn Integration
-description: Turn every new HubSpot contact into a personalised LinkedIn connection request — researched, written, and sent from your own account, automatically.
+description: Connect the LinkedIn account your outreach sends from — personalised connection requests and follow-up messages, within limits that keep your account safe.
 ---
 
 ## Overview
 
-The LinkedIn integration turns inbound interest into outreach without any manual work. When a new contact is created in your connected HubSpot portal, CallPrep automatically:
+This page is about **one thing**: connecting the LinkedIn account (a *seat*) that
+your outreach is sent from, and setting the limits it sends within.
 
-1. Researches the person and their company using your product context
-2. Writes a short, personalised LinkedIn connection note grounded in a real synergy with your product
-3. Sends the connection request **from your own LinkedIn account**, within safe daily limits
-4. Tracks acceptances and logs a note back on the HubSpot contact
+What is actually sent — who gets contacted, what each message says, how many days
+apart — is set up in **Dashboard → Autopilot**. A connected seat on its own never
+sends anything.
 
-You stay in control: every invite can be held for your approval, and hard limits protect your LinkedIn account.
+```
+Autopilot decides who and what
+      ↓
+Connection request with a note written for that person
+      ↓
+They accept
+      ↓
+Follow-up message on LinkedIn · reply stops the sequence
+      ↓
+Everything logged on the HubSpot contact
+```
 
 <Note>
-  The LinkedIn integration builds on the HubSpot integration, available on the
-  **Growth** and **Scale** plans. You connect HubSpot once and link at least one
-  LinkedIn account.
+  Invites always go out from **your own** LinkedIn account. CallPrep never uses a
+  shared or synthetic profile.
 </Note>
-
----
-
-## How it works
-
-```
-New HubSpot contact
-      ↓
-CallPrep researches the person + company
-      ↓
-Personalised connection note (based on a real synergy)
-      ↓
-Connection request sent from your LinkedIn account
-      ↓
-Acceptance tracked · note logged back to HubSpot
-```
-
-Everything after the contact is created happens automatically. You only ever connect your accounts and review invites.
 
 ---
 
 ## Setup
 
-### Step 1 — Complete onboarding
+Go to **Integrations → LinkedIn**. There are three ways to connect — all three
+end with the same result, so pick whichever suits how you sign in to LinkedIn.
 
-The first time you open CallPrep you're asked for a few details that shape your outreach:
+{/* SCREENSHOT li-1 — spec in SCREENSHOTS.md */}
 
-- **Sales methodology** — how your team approaches deals
-- **Acquisition context** — how leads typically reach you (e.g. _registered on our website_, _downloaded a guide_). This becomes the opening line of your notes.
-- **Excluded domains** — companies you never want researched or contacted
+### Option A — Chrome extension (one click)
 
-You can edit all of these later under **Settings → Outreach**.
+Install the CallPrep Chrome extension, open it and go to
+**Settings → LinkedIn integration**. It reuses the session you are already signed
+into, so it works with Google / SSO logins and needs no password.
 
-### Step 2 — Connect HubSpot
+### Option B — Email and password
 
-The integration reacts to new contacts in HubSpot. If you haven't already, connect HubSpot from **Dashboard → Integrations → HubSpot** — see the [HubSpot Integration](/integrations/hubspot) guide.
+Click **Connect account** and sign in to LinkedIn in the window that opens.
+Two-factor authentication is fully supported — authenticator app, SMS or one-time
+code.
 
-<Note>
-  The LinkedIn integration runs on the single product you integrate with
-  HubSpot. New contacts are researched with that product's context.
-</Note>
+### Option C — Session cookie (for Google / SSO sign-in)
 
-### Step 3 — Connect your LinkedIn account
-
-Go to **Dashboard → Integrations → LinkedIn** and open **LinkedIn seats**. Invites are always sent from your **own** LinkedIn account — never a shared or synthetic one. There are two ways to connect:
-
-**Email and password** — click **Connect account** and sign in to LinkedIn. Two-factor authentication (authenticator app, SMS, or one-time code) is fully supported.
-
-**Google / SSO sign-in** — if you sign in to LinkedIn with Google and don't have a LinkedIn password, you can connect using your existing browser session instead — no password required. Follow the in-app steps shown on the LinkedIn integration page.
+If you sign in to LinkedIn with Google and have no LinkedIn password, click
+**Sign in to LinkedIn with Google? Connect without a password** and follow the
+steps: in a browser where you are logged into LinkedIn, open DevTools (F12) →
+**Application → Cookies → https://www.linkedin.com**, copy the value of the
+`li_at` cookie and paste it in.
 
 <Tip>
-  **One-click option:** the CallPrep Chrome extension can connect your LinkedIn
-  account in one click — open the extension and go to **Settings → LinkedIn
-  integration**. It reuses the session you're already signed into, so it works
-  with Google / SSO logins too.
+  The cookie is used once to establish the connection and is not stored by
+  CallPrep.
 </Tip>
-
-<Tip>
-  Connect more than one LinkedIn account to increase throughput — each account
-  sends independently, up to its own daily limit.
-</Tip>
-
-### Step 4 — Choose how invites are sent
-
-Under your product's LinkedIn integration settings:
-
-- **Review mode** — _Review first_ holds every invite for your approval, or _Automatic_ sends within your limits without review.
-- **Note language** — write notes in your own language, or automatically match each prospect's language (detected from their public LinkedIn activity).
 
 ---
 
-## Safety limits
+## Sending limits
 
-The integration is built to protect your LinkedIn account. These limits are always enforced and cannot be exceeded:
+Open a connected seat to set its schedule. These are the settings that protect
+the account:
 
-| Limit                                     | Detail                                                                                                        |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| **20 invites per day, per LinkedIn account** | A hard ceiling. Add more accounts for more volume.                                                          |
-| **Weekdays only**                         | No invites on Saturday or Sunday.                                                                             |
-| **Working hours**                         | Sent only between **06:00 and 22:00** in each account's timezone.                                            |
-| **One invite per person, ever**           | The same LinkedIn profile is never invited twice.                                                            |
-| **Quality gate**                          | If research finds no credible, personalised angle, no generic note is ever sent — the invite waits for your review instead. |
+| Setting | Default | Notes |
+| --- | --- | --- |
+| **Timezone** | Your browser's timezone | Everything below is in this timezone |
+| **Send from / Send until** | 06:00 – 22:00 | Outside 06:00–22:00 you must confirm the risk before saving |
+| **Send on weekends** | Off | Turning it on also needs a confirmation |
+| **Daily limit** | Up to **20** invites | A hard ceiling — it cannot be raised, only lowered |
+
+{/* SCREENSHOT li-2 — spec in SCREENSHOTS.md */}
 
 <Warning>
-  These limits apply to **both** automatic and manual sends. If you try to send
-  past the daily cap or outside the sending window, CallPrep tells you why and
-  holds the invite.
+  **20 invites a day per account is the maximum.** LinkedIn restricts accounts
+  that behave unlike a person — sending at night, at weekends, or at volume. To
+  send more, connect an additional LinkedIn account: each one has its own
+  allowance.
 </Warning>
 
----
+On top of the daily limit, CallPrep spaces sends out on its own:
 
-## The connection note
-
-Every note is personalised and grounded in a real reason the prospect and your product fit — not a template. Notes are kept short to fit LinkedIn's connection-request limit, and open with your acquisition context so the prospect understands why you're reaching out.
-
-If the integration can't find a credible angle for someone, it won't guess — that invite is held for you to review or write yourself.
-
----
-
-## Reviewing and sending invites
-
-The **LinkedIn integration** page shows two sections:
-
-**Awaiting your approval** — every invite that hasn't been sent yet: ones held for review, ones missing a note (quality gate), and any that need attention. For each you can:
-
-- **Send** it now (subject to the same daily limit and sending window)
-- **Edit the note** if one is missing or you want to adjust it
-- **Skip** it if it's not a fit
-
-**Invites** — a history of everything sent, with the recipient's LinkedIn profile, the note, status, and date.
+- **5–15 minutes** between two invites from the same account, randomised
+- Up to **90 minutes** of random delay when a batch of leads arrives at once
+- Anything that does not fit today's limit or window is moved to the next
+  available slot — it is never dropped for being late
 
 ---
 
-## After an invite is accepted
+## What gets sent
 
-When a prospect accepts your connection request, the integration marks it **accepted** and logs a note back on the matching HubSpot contact, so your CRM reflects the outreach automatically.
+**The connection note** is written per lead from the research and from the angle
+you gave the step in your Autopilot. LinkedIn allows 200 characters, so notes are
+short by necessity. If a note comes back longer, it is trimmed back to a complete
+sentence — never cut mid-word — and the Activity timeline marks it as shortened.
+
+**If there is nothing credible to say, nothing is sent.** When the research turned
+up no usable angle, or the lead's name is not a real name (a role mailbox like
+*Info* or *Admin*), that invite is skipped with a reason on the timeline rather
+than sent as a generic note.
+
+**Follow-up messages** are a separate step type and only work on people you are
+connected to. A message step waits for the invite to be accepted and, if that has
+not happened within a week of its scheduled date, it is dropped with the reason
+*never connected*. Message steps allow more room than the note, but stay short on
+purpose — a long DM reads as a pitch.
+
+**People you are already connected to are never invited.** The invite step is
+skipped as *already connected*, and any message steps behind it run normally.
+
+---
+
+## Multiple accounts
+
+Connect more than one LinkedIn account to increase throughput — each has its own
+20-a-day allowance, its own hours and its own timezone. On a shared HubSpot
+portal, a lead is routed to the rep who owns the contact, and goes out from that
+rep's own seat.
+
+---
+
+## Pausing, reconnecting and disconnecting
+
+- **Pause** stops that seat sending while keeping the connection. Leads stay
+  enrolled and resume when you unpause.
+- **Reconnect** is what a *checkpoint* or *disconnected* status needs — LinkedIn
+  asked for verification again, or the session ended.
+- **Disconnect** removes the account. LinkedIn steps have nowhere to send from
+  until another account is connected.
+
+| Status | What it means |
+| --- | --- |
+| **Connected** | Ready to send |
+| **Pending** | The connection was started but not finished — complete the sign-in |
+| **Checkpoint** | LinkedIn asked for extra verification. Reconnect, or use the email + password method |
+| **Disconnected** | The session ended. Reconnect |
+| **Error · already connected** | This LinkedIn account is already on your CallPrep account — remove the duplicate row |
 
 ---
 
 ## Credits
 
-Each contact the integration researches consumes **one credit** from your plan — the same pool as manual API research and the HubSpot integration. Sending or reviewing invites is free. See [Credits](/plans/credits) for monthly limits and reset dates.
+Researching a lead costs **one credit**. Sending invites and messages is free, and
+so is a skipped or rescheduled touch. See [Credits](/plans/credits).
 
 ---
 
@@ -148,41 +157,63 @@ Each contact the integration researches consumes **one credit** from your plan �
 
 <AccordionGroup>
 
-<Accordion title="Whose LinkedIn account are invites sent from?">
-  Always your own connected account. If several teammates share a HubSpot
-  portal, each new contact is routed to the teammate who owns it in HubSpot, and
-  the invite goes out from that person's connected LinkedIn account. Each
-  teammate connects HubSpot and their own LinkedIn from their own CallPrep
-  account.
+<Accordion title="Where do I write the messages?">
+  You do not have to. The Autopilot writes each note and message per lead from the
+  research and from the angle you set on the step. What you control is the angle,
+  the tone and the goal — in **Dashboard → Autopilot**.
 </Accordion>
 
-<Accordion title="I sign in to LinkedIn with Google and don't know my password — can I still connect?">
-  Yes. Use the browser-session option when connecting your LinkedIn account — it
-  uses your existing logged-in session, so no LinkedIn password is needed. The
-  CallPrep Chrome extension can do this in one click under **Settings → LinkedIn
-  integration**.
+<Accordion title="Can I raise the 20-per-day limit?">
+  No. It is enforced in the product, not just in the form, so a higher number
+  would be a setting that silently does nothing. Connect another LinkedIn account
+  to add another 20 a day.
 </Accordion>
 
-<Accordion title="Can I increase how many invites go out per day?">
-  The 20-per-day limit is per LinkedIn account and can't be raised — it keeps
-  your account safe. To send more, connect additional LinkedIn accounts; each one
-  adds its own 20-per-day allowance.
+<Accordion title="Is my LinkedIn account safe?">
+  The limits exist for exactly this reason: no more than 20 invites a day, a
+  randomised gap between them, working hours only, weekends off by default, and no
+  invite to someone you are already connected to. You can go outside the safe
+  hours or send at weekends, but only deliberately — CallPrep asks you to confirm
+  and records that you did.
 </Accordion>
 
-<Accordion title="Will the same person ever be invited twice?">
-  No. Each LinkedIn profile is invited at most once, ever — even across separate
-  contacts or re-imports.
+<Accordion title="I sign in to LinkedIn with Google and have no password. Can I connect?">
+  Yes — use the Chrome extension (one click, no password), or the session-cookie
+  option on the LinkedIn integration page.
 </Accordion>
 
-<Accordion title="What if I want to check every invite before it sends?">
-  Set your review mode to **Review first**. Every invite then waits under
-  _Awaiting your approval_ until you send or skip it.
+<Accordion title="Will the same person be invited twice?">
+  No. A lead is enrolled in one Autopilot at a time, an invite is sent once per
+  sequence, and anyone you are already connected to is skipped instead of invited.
 </Accordion>
 
-<Accordion title="Do I have to write the notes?">
-  No — the integration writes them for you, personalised per prospect. You only
-  step in when the quality gate decides there isn't a strong enough angle, or if
-  you want to tweak a note before sending.
+<Accordion title="What happens if someone accepts but never answers?">
+  Whatever your Autopilot says. If you switched on **LinkedIn invite accepted**
+  as a stop condition, the sequence ends there and the acceptance is counted as a
+  win. If you did not, the follow-up messages you designed keep going.
+</Accordion>
+
+<Accordion title="Why was an invite skipped?">
+  Open the Autopilot's **Activity** and expand the lead — every skip carries its
+  reason: no LinkedIn profile found, already connected, no credible angle to write
+  from, or the seat's daily limit and window. Nothing is skipped silently.
+</Accordion>
+
+<Accordion title="Can I review each invite before it goes out?">
+  There is no per-invite approval queue any more. Use **Show example** on a step
+  in the Autopilot builder to see exactly what that step produces for a real lead
+  of yours, and adjust the angle until you like it.
+</Accordion>
+
+<Accordion title="Do I need HubSpot for LinkedIn outreach?">
+  Yes — HubSpot is what tells CallPrep a lead exists. See
+  [HubSpot Integration](/integrations/hubspot).
+</Accordion>
+
+<Accordion title="Can two people share one LinkedIn seat?">
+  No, and they should not: LinkedIn ties the account to a person and to their
+  usual devices and locations. Each rep connects their own account from their own
+  CallPrep account.
 </Accordion>
 
 </AccordionGroup>
@@ -191,4 +222,5 @@ Each contact the integration researches consumes **one credit** from your plan �
 
 ## Need help?
 
-Setting up the LinkedIn integration or connecting your LinkedIn account? Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you get running.
+Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you
+get running.

@@ -1,0 +1,92 @@
+---
+title: Integrations overview
+description: How HubSpot, LinkedIn, Email, WhatsApp and Telegram fit together — one CRM as the source of leads, four channels the outreach sends from.
+---
+
+## The short version
+
+CallPrep has three moving parts, and every integration belongs to one of them.
+
+| Part | What it is | Where you set it up |
+| --- | --- | --- |
+| **The source** | HubSpot. A new contact in your CRM is what starts everything. | Integrations → HubSpot |
+| **The decision** | Autopilot. Who gets contacted, what is said, on which channels, and when it stops. | Dashboard → Autopilot |
+| **The channels** | LinkedIn, Email, WhatsApp, Telegram — the accounts messages are actually sent from. | Integrations → the channel |
+
+```
+New HubSpot contact
+      ↓
+Does it match one of your Autopilots?  ──── no ──→  waits in the queue, then is abandoned
+      ↓ yes                                          (never researched, no credit spent)
+Research the person and their company  (1 credit)
+      ↓
+Enrol into that Autopilot's sequence
+      ↓
+Messages sent from your own LinkedIn / mailbox / WhatsApp / Telegram
+      ↓
+Every message logged back on the HubSpot contact · a reply stops the sequence
+```
+
+<Note>
+  Connecting a channel does not send anything on its own. A channel only sends
+  when an Autopilot has a step on it — see **Dashboard → Autopilot**.
+</Note>
+
+---
+
+## The channels at a glance
+
+| Channel | What you connect | Hard daily limit | Cold outreach | Typical plan |
+| --- | --- | --- | --- | --- |
+| [LinkedIn](/integrations/linkedin) | Your own LinkedIn account (a "seat") | 20 invites per account | Yes | Individual and up |
+| [Email](/integrations/email) | Gmail, Outlook / Microsoft 365, or your own domain | Up to 500 per mailbox, your choice | Yes | BDR and up |
+| [WhatsApp](/integrations/whatsapp) | Your WhatsApp number (QR scan) | 20 messages | Only after you switch off warm-only | BDR+ |
+| [Telegram](/integrations/telegram) | Your Telegram account (QR scan) | 20 messages | Only after you switch off warm-only | BDR+ |
+
+Every channel sends from **your** account, never from a shared or synthetic one.
+See the [Billing page](https://call-prep-api.vercel.app/billing) for what your plan includes.
+
+---
+
+## What each integration is for
+
+<CardGroup cols={2}>
+  <Card title="HubSpot" icon="database" href="/integrations/hubspot">
+    The source of leads and the record of what happened. New contacts start the
+    flow; every message sent is written back onto the contact timeline.
+  </Card>
+  <Card title="LinkedIn" icon="linkedin" href="/integrations/linkedin">
+    Connection requests with a personalised note, and follow-up messages once the
+    request is accepted.
+  </Card>
+  <Card title="Email" icon="envelope" href="/integrations/email">
+    Outreach from your real mailbox, threaded into one conversation, with reply
+    and bounce detection.
+  </Card>
+  <Card title="WhatsApp & Telegram" icon="comments" href="/integrations/whatsapp">
+    Short follow-ups to leads who already engaged. Cold messaging is off by
+    default on both.
+  </Card>
+</CardGroup>
+
+---
+
+## Setup order
+
+1. **Add your product** — Settings → Product. Everything else runs on it.
+2. **Connect HubSpot** — this is what feeds leads in.
+3. **Connect at least one channel** — LinkedIn is the quickest to start with.
+4. **Create an Autopilot** — Dashboard → Autopilot, from scratch or from a template.
+
+<Tip>
+  Step 4 is the one that decides whether anything is sent. An account with
+  HubSpot and a LinkedIn seat connected but no Autopilot enabled will sit quietly
+  and never contact anyone.
+</Tip>
+
+---
+
+## Need help?
+
+Stuck on any of this? Write to [hello@callprep.app](mailto:hello@callprep.app) and
+we'll get back to you within one business day.
