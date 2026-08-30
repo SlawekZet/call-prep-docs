@@ -1,0 +1,157 @@
+---
+title: Telegram Integration
+description: Connect your Telegram account and follow up with leads who already engaged — warm-only by default, 20 messages a day, addressed by @username.
+---
+
+## Overview
+
+Connect the Telegram account your outreach is sent from. Messages go out from
+**your own account**, exactly as if you typed them.
+
+Like WhatsApp, Telegram is a follow-up channel: out of the box it messages **only
+leads who already engaged** — someone who accepted your LinkedIn invite or
+replied to your email.
+
+<Note>
+  Add a **Telegram step** to a sequence in **Dashboard → Autopilot** — a connected
+  account on its own never sends anything. Telegram is available on the BDR+
+  plan; see the [Billing page](https://call-prep-api.vercel.app/billing).
+</Note>
+
+<Warning>
+  **Telegram needs a @username, not a phone number.** Telegram cannot open a chat
+  from a number, so a lead is reachable only if their handle is stored in HubSpot.
+  There is no standard HubSpot field for it — most portals need a custom property.
+</Warning>
+
+---
+
+## Setup
+
+### Step 1 — Connect your account
+
+Go to **Integrations → Telegram** and click **Connect Telegram**. A page opens
+with a QR code: scan it from your phone
+(**Telegram → Settings → Devices → Link Desktop Device**). You are returned to
+CallPrep and the account shows as *connected*.
+
+{/* SCREENSHOT tg-1 — spec in SCREENSHOTS.md */}
+
+### Step 2 — Create a place to store handles, and point CallPrep at it
+
+1. In HubSpot, create a contact property for the handle if you do not have one —
+   for example *Telegram username*, a single-line text field.
+2. In CallPrep, under **Telegram handle source**, list the properties that hold
+   it, in the order they should be tried.
+
+Handles can be stored as `@name`, `name` or a `t.me/name` link — all three work.
+A number will not.
+
+A lead with no usable handle is skipped with *No Telegram handle on the contact*
+on the timeline, and the handle is looked up again in HubSpot right before each
+send, so one added later still gets used.
+
+{/* SCREENSHOT tg-2 — spec in SCREENSHOTS.md */}
+
+### Step 3 — Set the schedule
+
+| Setting | Default | Notes |
+| --- | --- | --- |
+| **Timezone** | Your browser's timezone | Everything below is in this timezone |
+| **Send from / Send until** | 06:00 – 22:00 | A message at 3 a.m. is worse than no message |
+| **Send on weekends** | Allowed | Telegram is not a professional network — weekends are normal here |
+| **Daily limit** | Up to **20** messages | A hard ceiling. It cannot be raised, only lowered |
+
+---
+
+## Who can be messaged
+
+**Warm leads only (recommended, on by default).** A Telegram step is sent only
+after the lead has shown a warm signal — they accepted your LinkedIn invite or
+replied to your email. Until then the message waits and is re-checked; if the
+lead never warms up within three weeks it is dropped with *never warm* on the
+timeline, and the rest of the sequence carries on.
+
+**Cold outreach (off by default).** Turning warm-only off lets this account
+message people who never responded. CallPrep asks you to confirm and records the
+decision: an unsolicited message from an unknown account is what gets reported on
+Telegram, and reported accounts are banned outright.
+
+{/* SCREENSHOT tg-3 — spec in SCREENSHOTS.md */}
+
+---
+
+## What gets sent
+
+Messages are written per lead from the research and from the angle you gave the
+step. They are deliberately **very short** — a couple of lines, no links, no
+emoji, and they say who you are.
+
+If the research found nothing credible to build on, the message is skipped with a
+reason rather than sent as filler.
+
+Every message sent is logged as a note on the HubSpot contact, and a reply stops
+the sequence on all channels.
+
+---
+
+## Pausing and disconnecting
+
+- **Pause** stops this account sending while keeping the connection.
+- **Disconnect** removes it. Telegram steps have nowhere to send from until an
+  account is connected again. You can also end the session from
+  **Telegram → Settings → Devices**.
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Can I message a lead by phone number?">
+  No. Telegram only opens a chat from a @username, so the handle has to be in
+  HubSpot. This is a Telegram rule, not a CallPrep one.
+</Accordion>
+
+<Accordion title="How do I get my leads' Telegram handles?">
+  Ask for it where you already ask for a phone number — a sign-up form, an
+  onboarding question, a booking form — and map that field to a HubSpot contact
+  property. Leads without a handle simply skip the Telegram step; the rest of the
+  sequence is unaffected.
+</Accordion>
+
+<Accordion title="A handle is stored but the message was still skipped.">
+  Telegram could not resolve it: the username was changed, deleted, or was never
+  a username (a phone number, an email, a first name). The reason is on the step
+  in the Autopilot's **Activity** view.
+</Accordion>
+
+<Accordion title="Is this a bot?">
+  No. It is your own Telegram account, linked as a device — so the lead sees a
+  message from you, not from a bot account, and can reply in the normal way.
+</Accordion>
+
+<Accordion title="Can I message leads who never replied to anything?">
+  Only if you switch **Warm leads only** off, confirm the warning and accept the
+  risk. Unsolicited messages are the fastest way to get a Telegram account
+  reported and banned.
+</Accordion>
+
+<Accordion title="Can I send more than 20 messages a day?">
+  No. The limit is enforced in the product, so a higher number would be a setting
+  that silently does nothing. It protects the account.
+</Accordion>
+
+<Accordion title="What happens if someone answers?">
+  The sequence stops on every channel, and the reply counts as a win in the
+  Autopilot's analytics. Answer them yourself in Telegram as usual.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Need help?
+
+Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you
+connect your account.

@@ -1,0 +1,269 @@
+---
+title: Email Integration
+description: Send outreach from your own mailbox — Gmail, Outlook or your own domain — with per-mailbox limits, warm-up, threading, and reply and bounce detection.
+---
+
+## Overview
+
+Connect the mailbox your outreach is sent from. Emails go out **through your real
+mailbox**, so they look and thread like anything else you send, and replies come
+back to you.
+
+What is sent — who gets contacted, what each email says, how many days apart — is
+set up in **Dashboard → Autopilot**. A connected mailbox on its own never sends
+anything.
+
+```
+Autopilot decides who and what
+      ↓
+One mailbox is assigned to the lead for the whole sequence
+      ↓
+First email · follow-ups reply inside the same thread
+      ↓
+A reply (or a hard bounce) stops the emails
+      ↓
+Everything logged on the HubSpot contact
+```
+
+---
+
+## Setup
+
+Go to **Integrations → Email** and click **Add another mailbox** (or connect your
+first one). The page shows how many mailboxes your plan allows — *N of M
+mailboxes*.
+
+{/* SCREENSHOT em-1 — spec in SCREENSHOTS.md */}
+
+### Option A — Gmail or Google Workspace (recommended)
+
+Click **Connect Gmail** and approve access. Sending happens through your real
+Gmail account: no DNS to set up, best deliverability, native threading.
+
+### Option B — Outlook or Microsoft 365 (recommended)
+
+Click **Connect Outlook** and approve access. Same as above, through Microsoft.
+
+### Option C — Your own domain
+
+For a sending address on a domain you own that is not on Google or Microsoft.
+Click **Set up a custom-domain address**, enter the from name and address, then
+add the DNS records shown to your domain and click **Check verification**. DNS
+changes usually take a few minutes.
+
+<Note>
+  Personal mailbox domains (gmail.com, outlook.com, yahoo.com…) are rejected on
+  this path — use the Gmail or Outlook buttons instead.
+</Note>
+
+<Warning>
+  With a custom-domain address, replies land in your mailbox and CallPrep cannot
+  see them, so sequences are **not** stopped automatically by an email reply.
+  See *Replies and bounces* below.
+</Warning>
+
+### Finish: your sender identity
+
+Commercial email has to say who is sending it. Under
+**Settings → Outreach → Email signature** set your name, your company and a
+postal address, and optionally your photo or logo, phone and website.
+
+<Warning>
+  Until the identity is complete, email steps are **held** — the dashboard shows
+  an "Emails are on hold" banner with a link to the right card. LinkedIn,
+  WhatsApp and Telegram are unaffected.
+</Warning>
+
+Every outreach email also carries a standard **unsubscribe header**, which mail
+clients turn into their own one-click unsubscribe button. You can add a visible
+opt-out as well: a P.S. in your own words ("just tell me and I'll stop") or a
+plain unsubscribe link. An unsubscribe stops every channel for that person, not
+just email.
+
+{/* SCREENSHOT em-2 — spec in SCREENSHOTS.md */}
+
+---
+
+## Mailbox settings
+
+Open a mailbox row to see its settings.
+
+| Setting | What it does |
+| --- | --- |
+| **Timezone, Send from / Send until, Send on weekends** | The window this mailbox may send in |
+| **Daily limit** | Emails per day from this address (up to 500). Pick what a person could plausibly send |
+| **Of which imported** | A sub-limit for imported leads, so a bulk list cannot eat the day's capacity that fresh leads need. Defaults to 70% of the daily limit |
+| **This mailbox sends** | *Everything*, *Organic leads only*, or *Imported leads only* — useful for keeping bulk-list risk off the address you actually talk to people from |
+| **Collect replies here** | Marks this mailbox as the reply address for the account. Only a verified mailbox can be chosen |
+| **Pause this mailbox** | Sequences skip it and send from the others. Leads already assigned to it wait |
+
+{/* SCREENSHOT em-3 — spec in SCREENSHOTS.md */}
+
+### Warm-up
+
+A newly connected mailbox starts at **5 emails on its first day and climbs by 5 a
+day** until it reaches the daily limit you set. A brand-new address has no
+reputation to spend, and providers score the pattern: fifty cold emails on day one
+reads as a list.
+
+The row shows `5/day · warming up` while this is happening, and how many days are
+left until the full limit.
+
+You can switch warm-up off if the address genuinely is not new to sending — an
+established domain, or a mailbox reconnected after being removed. CallPrep will
+warn you first and record the decision, because the cost of getting it wrong is
+the reputation of the address itself, not just one campaign.
+
+---
+
+## How sending works
+
+- **One mailbox per lead.** A lead is assigned a mailbox when it enters a sequence
+  and keeps it, so the whole conversation comes from one address.
+- **Follow-ups thread.** Later emails reply inside the first email's thread, with
+  a `Re:` subject, so the lead sees one conversation rather than five cold emails.
+  This is a per-Autopilot setting.
+- **First emails come first.** When there is more to send than the daily limit
+  allows, leads who have never been contacted are served before follow-ups — the
+  capacity bar on the Autopilot page shows the split, and **Upcoming sends** shows
+  the queue behind it.
+- **One email per lead per day**, regardless of how many steps come due.
+- **Several mailboxes share the load.** New leads are assigned to whichever
+  mailbox has the most room, counting warm-up, pause state and role.
+
+---
+
+## Replies and bounces
+
+**Replies.** For Gmail and Outlook mailboxes, CallPrep notices a reply and stops
+the sequence (if the Autopilot has *stop on reply* on, which is the default).
+Out-of-office and auto-replies do not count as an answer. A reply logged on the
+HubSpot contact also stops the sequence, which is the safety net for
+custom-domain mailboxes.
+
+**Bounces.** A permanent bounce stops the **email** steps for that lead — other
+channels continue, since it is the address that failed, not the person. If more
+than **5% of a mailbox's emails bounce permanently** over a week (measured once
+it has sent at least 20), the mailbox is **paused automatically** and you get an
+email explaining why. Temporary delays do not count.
+
+---
+
+## What CallPrep can read
+
+| Provider | Access requested | What that means |
+| --- | --- | --- |
+| Gmail / Workspace | Send email · read message **metadata** | Headers only — sender, recipient, subject line, dates. Message bodies are not accessible |
+| Outlook / Microsoft 365 | Send email · read basic mail | Everything except message bodies, attachments and previews |
+| Own domain | none | Sending only; CallPrep has no access to your mailbox |
+
+The reading is used for one purpose: noticing that a lead answered, and that a
+message bounced. Only addresses that belong to a lead in a live sequence are
+matched — anything else is passed over and nothing about it is stored.
+
+---
+
+## When a mailbox stops working
+
+OAuth access can end without warning — a password change, a revoked grant, an
+admin policy. When that happens the mailbox is marked **Disconnected**, the
+dashboard shows a red banner, and you get an email asking you to reconnect. The
+other mailboxes keep sending in the meantime, at reduced capacity.
+
+A send that failed because the authorization was dead is **retried after you
+reconnect** — those leads are not skipped.
+
+If a send fails for another reason, the mailbox row explains it in plain language
+(a Google account without Gmail enabled, a domain not verified yet, rate
+limiting), with the provider's own wording under **Technical details**.
+
+---
+
+## Credits
+
+Researching a lead costs **one credit**. Sending emails is free, and so is a
+skipped or rescheduled email. See [Credits](/plans/credits).
+
+---
+
+## Frequently asked questions
+
+<AccordionGroup>
+
+<Accordion title="Can CallPrep read my emails?">
+  On Gmail it can read **headers only** — who a message is from, to, its subject
+  and date — never the body. On Outlook it can read everything except the body,
+  attachments and previews. With a custom-domain sender it has no read access at
+  all. It uses this to spot replies and bounces for leads in a live sequence.
+</Accordion>
+
+<Accordion title="How many mailboxes can I connect?">
+  It depends on your plan — the top of the Email page shows *N of M mailboxes*
+  and hides the add button once you are at the limit. Reconnecting an address you
+  already have never counts as a new mailbox, so you can always repair what you
+  have. See the [Billing page](https://call-prep-api.vercel.app/billing).
+</Accordion>
+
+<Accordion title="Why is my new mailbox only sending 5 emails a day?">
+  That is the warm-up ramp: 5 on day one, +5 each day until it reaches your daily
+  limit. The row shows how many days are left. It can be switched off, but only
+  do that if the address has an established sending history.
+</Accordion>
+
+<Accordion title="Why are my emails on hold?">
+  Your sender identity is incomplete. Commercial email must identify the sender,
+  so email steps wait until your name, company and postal address are filled in
+  under **Settings → Outreach → Email signature**. Other channels keep running.
+</Accordion>
+
+<Accordion title="Do follow-ups look like a new cold email each time?">
+  No. Follow-ups are sent as replies in the first email's thread, keeping one
+  subject and one conversation. You can turn threading off per Autopilot.
+</Accordion>
+
+<Accordion title="Someone answered — will they still get the next email?">
+  Not on Gmail or Outlook: the reply is detected and the sequence stops, and the
+  check is repeated right before each send. With a custom-domain mailbox CallPrep
+  cannot see the reply — log the email on the HubSpot contact, or close the lead
+  from the Autopilot's Activity view.
+</Accordion>
+
+<Accordion title="My mailbox was paused automatically. What happened?">
+  More than 5% of its emails bounced permanently over the last week (counted once
+  it has sent at least 20). That is a deliverability alarm, not a quota — check
+  where the addresses came from before resuming. You will have had an email
+  explaining it.
+</Accordion>
+
+<Accordion title="Which address do replies come back to?">
+  The mailbox marked **Collect replies here**. If a lead's sequence is sent from a
+  different mailbox, that address is used as the reply-to, so the conversation
+  lands in one place.
+</Accordion>
+
+<Accordion title="Can I use one mailbox for imports and another for inbound leads?">
+  Yes — that is what **This mailbox sends** is for. Set one to *Imported leads
+  only* and another to *Organic leads only*, and bulk-list risk stays off the
+  address you actually converse from.
+</Accordion>
+
+<Accordion title="Can I send from an alias or a shared mailbox?">
+  Connect the mailbox you can sign in to. Aliases and shared mailboxes work only
+  when the provider lets that account send as the address — if it does not, the
+  send is rejected and the row will say so.
+</Accordion>
+
+<Accordion title="What happens to unsubscribes?">
+  The person is added to your suppression list and every active sequence for them
+  stops — on all channels, not just email. Suppression is permanent and is never
+  cleared by a re-import.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## Need help?
+
+Contact us at [hello@callprep.app](mailto:hello@callprep.app) and we'll help you
+get your mailbox connected.
